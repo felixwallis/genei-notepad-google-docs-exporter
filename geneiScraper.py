@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
-import xmltojson
-import json
 import re
+from operator import itemgetter
 
 
 h1_text = []
@@ -53,11 +52,29 @@ def get_headers():
 
 
 def get_header_positions():
+    header_positions = {}
     for header in h1_text:
-        rl = re.split(r'\s', header)
-        # print(rl)
+        header_position = all_text_string.index(header)
+        header_position_pair = {
+            header: header_position
+        }
+        header_positions.update(header_position_pair)
+    for header in h2_text:
+        header_position = all_text_string.index(header)
+        header_position_pair = {
+            header: header_position
+        }
+        header_positions.update(header_position_pair)
+    for header in h3_text:
+        header_position = all_text_string.index(header)
+        header_position_pair = {
+            header: header_position
+        }
+        header_positions.update(header_position_pair)
+    global sorted_header_positions
+    sorted_header_positions = dict(
+        sorted(header_positions.items(), key=lambda item: item[1]))
 
 
 get_headers()
 get_header_positions()
-print(all_text_string)
