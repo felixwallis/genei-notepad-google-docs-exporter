@@ -76,5 +76,20 @@ def get_header_positions():
         sorted(header_positions.items(), key=lambda item: item[1]))
 
 
+def retrieve_text_between_markers(marker_1, marker_2, header_length):
+    text_snippit = ''
+    for index, char in enumerate(all_text_string):
+        if index >= (marker_1 + header_length) and index < marker_2:
+            text_snippit += char
+    return text_snippit
+
+
+def generate_text_snippits():
+    text_snippit = retrieve_text_between_markers(
+        55, 1314, len('The natural condition and its horrors'))
+    print(text_snippit)
+
+
 get_headers()
 get_header_positions()
+generate_text_snippits()
