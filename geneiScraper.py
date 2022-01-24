@@ -2,6 +2,8 @@ from bs4 import BeautifulSoup
 import re
 from operator import itemgetter
 
+from numpy import sort
+
 
 h1_text = []
 h2_text = []
@@ -52,28 +54,35 @@ def get_headers():
 
 
 def get_header_positions():
-    header_positions = {}
+    global header_positions
+    header_positions = []
     for header in h1_text:
         header_position = all_text_string.index(header)
-        header_position_pair = {
-            header: header_position
+        header_info = {
+            'header': header,
+            'header_position': header_position,
+            'header_type': 'h1'
         }
-        header_positions.update(header_position_pair)
+        header_positions.append(header_info)
     for header in h2_text:
         header_position = all_text_string.index(header)
-        header_position_pair = {
-            header: header_position
+        header_info = {
+            'header': header,
+            'header_position': header_position,
+            'header_type': 'h2'
         }
-        header_positions.update(header_position_pair)
+        header_positions.append(header_info)
     for header in h3_text:
         header_position = all_text_string.index(header)
-        header_position_pair = {
-            header: header_position
+        header_info = {
+            'header': header,
+            'header_position': header_position,
+            'header_type': 'h3'
         }
-        header_positions.update(header_position_pair)
-    global sorted_header_positions
-    sorted_header_positions = dict(
-        sorted(header_positions.items(), key=lambda item: item[1]))
+        header_positions.append(header_info)
+
+    header_positions.sort(
+        key=lambda item: item['header_position'])
 
 
 def retrieve_text_between_markers(marker_1, marker_2, header_length):
