@@ -88,15 +88,38 @@ def get_header_positions():
 def retrieve_text_between_markers(marker_1, marker_2, header_length):
     text_snippit = ''
     for index, char in enumerate(all_text_string):
-        if index >= (marker_1 + header_length) and index < marker_2:
-            text_snippit += char
+        if marker_2 is not None:
+            if index >= (marker_1 + header_length) and index < marker_2:
+                text_snippit += char
+        else:
+            if index >= (marker_1 + header_length):
+                text_snippit += char
     return text_snippit
 
 
 def generate_text_snippits():
-    text_snippit = retrieve_text_between_markers(
-        55, 1314, len('The natural condition and its horrors'))
-    print(text_snippit)
+    global document_outline
+    document_outline = []
+    for index, header_position in enumerate(header_positions):
+        header = {
+            'text': header_position['header'],
+            'text_type': header_position['header_type']
+        }
+        document_outline.append(header)
+
+        marker_1 = header_position['header_position']
+        if index < len(header_positions) - 1:
+            marker_2 = header_positions[index + 1]['header_position']
+        else:
+            marker_2 = None
+        text_snippt = retrieve_text_between_markers(
+            marker_1, marker_2, len(header_position['header']))
+        text_after_header = {
+            'text': text_snippt,
+            'text_type': 'unstyled'
+        }
+        document_outline.append(text_after_header)
+    print(document_outline)
 
 
 get_headers()
