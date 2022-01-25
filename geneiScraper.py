@@ -128,6 +128,7 @@ def process_document_with_openai():
         api_key = json_data['API_Key']
     openai.api_key = api_key
 
+    processed_document_outline = []
     base_prompt = 'Turn these sentences into bullet points: '
     for text in document_outline:
         if text['text_type'] == 'unstyled':
@@ -141,7 +142,12 @@ def process_document_with_openai():
                 frequency_penalty=0.5,
                 presence_penalty=0.2
             )
-            print(response)
+            json_object = json.loads(str(response))
+            print(json_object['choices'][0]['text'])
+            text['processed_text'] = json_object['choices'][0]['text']
+            processed_document_outline.append(text)
+        else:
+            processed_document_outline.append(text)
 
 
 get_headers()
