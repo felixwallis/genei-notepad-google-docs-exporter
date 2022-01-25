@@ -1,8 +1,8 @@
+from urllib import response
 from bs4 import BeautifulSoup
 import re
-from operator import itemgetter
-
-from numpy import sort
+import json
+import openai
 
 
 h1_text = []
@@ -119,9 +119,32 @@ def generate_text_snippits():
             'text_type': 'unstyled'
         }
         document_outline.append(text_after_header)
-    print(document_outline)
+
+
+def process_document_with_openai():
+    api_key = ''
+    with open('OpenAI_API_Key.json', 'r') as fp:
+        json_data = json.load(fp)
+        api_key = json_data['API_Key']
+    openai.api_key = api_key
+
+    base_prompt = 'Turn these sentences into bullet points: '
+    for text in document_outline:
+        if text['text_type'] == 'unstyled':
+            text_prompt = base_prompt + text['text']
+            response = openai.Completion.create(
+                engine="text-davinci-001",
+                prompt=text_prompt,
+                temperature=0.7,
+                max_tokens=1000,
+                top_p=1,
+                frequency_penalty=0.5,
+                presence_penalty=0.2
+            )
+            print(response)
 
 
 get_headers()
 get_header_positions()
 generate_text_snippits()
+process_document_with_openai()
