@@ -9,7 +9,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 # If modifying these scopes, delete the file token.json.
-SCOPES = ['https://www.googleapis.com/auth/documents.readonly']
+SCOPES = ['https://www.googleapis.com/auth/documents']
 
 # The ID of a sample document.
 DOCUMENT_ID = '195j9eDD3ccgjQRttHhJPymLJUCOUjs-jmwTrekvdjFE'
@@ -40,10 +40,14 @@ def main():
     try:
         service = build('docs', 'v1', credentials=creds)
 
-        # Retrieve the documents contents from the Docs service.
-        document = service.documents().get(documentId=DOCUMENT_ID).execute()
+        title = 'My Document'
+        body = {
+            'title': title
+        }
 
-        print('The title of the document is: {}'.format(document.get('title')))
+        document = service.documents().create(body=body).execute()
+
+        print('Created document with title: {0}'.format(document.get('title')))
     except HttpError as err:
         print(err)
 
