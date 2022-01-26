@@ -48,6 +48,7 @@ def main():
         document = service.documents().create(body=body).execute()
         document_id = document.get('documentId')
 
+        title_text = title
         text = '\n\nHobbes defines liberty in two ways: in the state of nature, "Liberty, is understood, according to the proper signification of the word, the absence of externall impedi- ments." \nCivil liberty, under government, is the absence of law or other sovereign commandment. "The Greatest Liberty of Subjects, dependeth on the Silence of the Law."\nBoth accounts make it entirely possible to act voluntarily but from fear, and neither suggests that freedom has anything to do with the freedom of the will. \nIn this definition, Hobbes wanted to enforce the claim thatfreedom was not a matter of form of government. \nFreedom and government are antithetical, because we give up all our rights when we enter political society, savethe right to defend ourselves against the immediate threat of death and injury.'
         requests = [
             {
@@ -59,10 +60,18 @@ def main():
                 }
             },
             {
+                'insertText': {
+                    'location': {
+                        'index': 1,
+                    },
+                    'text': title_text
+                }
+            },
+            {
                 'updateTextStyle': {
                     'range': {
                         'startIndex': 1,
-                        'endIndex': len(text)
+                        'endIndex': len(title_text) + len(text)
                     },
                     'textStyle': {
                         'weightedFontFamily': {
@@ -70,6 +79,19 @@ def main():
                         }
                     },
                     'fields': 'weightedFontFamily'
+                }
+            },
+            {
+                'updateParagraphStyle': {
+                    'range': {
+                        'startIndex': 1,
+                        'endIndex': len(title_text)
+                    },
+                    'paragraphStyle': {
+                        'namedStyleType': 'HEADING_1',
+                        'alignment': 'CENTER',
+                    },
+                    'fields': '*'
                 }
             }
         ]
