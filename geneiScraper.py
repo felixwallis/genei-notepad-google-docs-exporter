@@ -161,9 +161,9 @@ def process_document_with_openai():
 
 def prep_document_outline_for_google_doc():
     for text_item in processed_document_outline:
-        if text_item['text_type'] == 'unstyled':
+        if text_item['text_type'] == 'unstyled' and text_item['processed_text']:
             processed_text = re.sub(
-                r'(-[A-Z])', text_item['text'][1], text_item['text'])
+                r'\n -', '\n' + text_item['processed_text'][1], text_item['processed_text'])
             text_item['text'] = processed_text
     print(processed_document_outline)
 
