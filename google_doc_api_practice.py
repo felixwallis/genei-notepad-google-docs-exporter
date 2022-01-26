@@ -46,6 +46,36 @@ def main():
         }
 
         document = service.documents().create(body=body).execute()
+        document_id = document.get('documentId')
+
+        text = '\n\n-Hobbes\'s most famous single phrase is his observation that life in the state of nature is "solitary, poore, nasty, brutish, and short."\n-Hobbes dissented from Aristotle on the substance of human nature.\n-Aristotle thought that there was some kind of natural attraction toward the good, and toward life in society. Hobbes thinks that at best there is a common aversion to the summum malum, or death, and that we become "apt" for soci- ety only by being socialized into decent conduct.\n-Equally important is Hobbes\'s insistence on the natural equality of man- kind. Thinking of humanity as morally, politically, and intellectually on a level reinforced the view that the state rested on universal consent rather than on a tendency toward a natural hierarchy.\n-Hobbes says the heads of all governments live in a state of nature with respect to one another.\n-The state of nature is simply the condition where we are forced into contact with each other in the absence of a superior authority that can lay down and enforce rules to govern our behavior toward each other.\n-The state of nature with which Hobbes is concerned is more nearly the condition of civilized people deprived of stable govern- ment than anything else.'
+        requests = [
+            {
+                'insertText': {
+                    'location': {
+                        'index': 1,
+                    },
+                    'text': text
+                }
+            },
+            {
+                'updateTextStyle': {
+                    'range': {
+                        'startIndex': 1,
+                        'endIndex': len(text)
+                    },
+                    'textStyle': {
+                        'weightedFontFamily': {
+                            'fontFamily': 'Georgia'
+                        }
+                    },
+                    'fields': 'weightedFontFamily'
+                }
+            }
+        ]
+
+        service.documents().batchUpdate(documentId=document_id,
+                                        body={'requests': requests}).execute()
 
         print('Created document with title: {0}'.format(document.get('title')))
     except HttpError as err:
