@@ -140,9 +140,9 @@ def process_document_with_openai():
 
     # processed_document_outline = []
     # base_prompt = 'Turn these sentences into bullet points: '
-    # for text in document_outline:
-    #     if text['text_type'] == 'unstyled':
-    #         text_prompt = base_prompt + text['text']
+    # for text_element in document_outline:
+    #     if text_element['text_type'] == 'unstyled':
+    #         text_prompt = base_prompt + text_element['text']
     #         response = openai.Completion.create(
     #             engine="text-davinci-001",
     #             prompt=text_prompt,
@@ -153,10 +153,10 @@ def process_document_with_openai():
     #             presence_penalty=0.2
     #         )
     #         json_object = json.loads(str(response))
-    #         text['processed_text'] = json_object['choices'][0]['text']
-    #         processed_document_outline.append(text)
+    #         text_element['processed_text'] = json_object['choices'][0]['text']
+    #         processed_document_outline.append(text_element)
     #     else:
-    #         processed_document_outline.append(text)
+    #         processed_document_outline.append(text_element)
 
 
 def prep_document_outline_for_google_doc():
@@ -171,7 +171,7 @@ def prep_document_outline_for_google_doc():
             cleaned_text = re.sub(r'\.(?=\S)([A-Z])', ('. ' + r'\1'),
                                   text_with_cleaned_hyphens)
             text_item['processed_text'] = cleaned_text
-    print(processed_document_outline)
+            print(cleaned_text)
 
 
 get_headers()
