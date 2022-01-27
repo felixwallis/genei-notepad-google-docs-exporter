@@ -162,7 +162,14 @@ def process_document_with_openai():
 def prep_document_outline_for_google_doc():
     for text_item in processed_document_outline:
         if text_item['text_type'] == 'unstyled':
-            cleaned_text = text_item['processed_text'].replace('\n- ', '\n')
+            text_without_spaced_bullet_points = text_item['processed_text'].replace(
+                '\n- ', '\n')
+            text_without_all_bullet_points = text_without_spaced_bullet_points.replace(
+                '\n-', '\n')
+            text_with_cleaned_hyphens = text_without_all_bullet_points.replace(
+                '- ', '')
+            cleaned_text = re.sub(r'\.(?=\S)([A-Z])', ('. ' + r'\1'),
+                                  text_with_cleaned_hyphens)
             text_item['processed_text'] = cleaned_text
     print(processed_document_outline)
 
