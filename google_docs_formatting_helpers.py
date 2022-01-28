@@ -167,6 +167,7 @@ def create_bold_sub_header(sub_header):
 
 
 def create_text_with_bullet_points(text):
+    bullet_start_index = 1
     for char in text:
         if char != '\n':
             bullet_start_index = text.index(char)

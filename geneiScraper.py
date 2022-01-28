@@ -3,7 +3,11 @@ from bs4 import BeautifulSoup
 import re
 import json
 import openai
+import google_docs_formatting_helpers
+import google_docs_api_helpers
 
+print('Give this document a name: ')
+title = input()
 
 h1_text = []
 h2_text = []
@@ -109,7 +113,8 @@ def generate_text_snippits():
     for index, header_position in enumerate(header_positions):
         header = {
             'text': header_position['header'],
-            'text_type': header_position['header_type']
+            'text_type': header_position['header_type'],
+            'h3_present': header_position['h3_present']
         }
         document_outline.append(header)
 
@@ -176,13 +181,16 @@ def process_document_with_openai():
     #         processed_document_outline.append(text_element)
     #     else:
     #         processed_document_outline.append(text_element)
+    # print(json.dumps(processed_document_outline))
+
     with open('dev_processed_text.json', 'r') as fp:
         json_data = json.load(fp)
         processed_document_outline = json_data['processed_document_outline']
 
 
-def prep_document_outline_for_google_doc():
-    for text_item in processed_document_outline:
+def add_outline_to_google_doc():
+    document_id = google_docs_api_helpers.create_document(title)
+    for text_item in reversed(processed_document_outline):
         if text_item['text_type'] == 'unstyled':
             text_without_spaced_bullet_points = text_item['processed_text'].replace(
                 '\n- ', '\n')
@@ -192,12 +200,42 @@ def prep_document_outline_for_google_doc():
                 '- ', '')
             cleaned_text = re.sub(r'\.(?=\S)([A-Z])', ('. ' + r'\1'),
                                   text_with_cleaned_hyphens)
-            text_item['processed_text'] = cleaned_text
-    print(processed_document_outline)
+            requests = google_docs_formatting_helpers.create_text_with_bullet_points(
+                cleaned_text)
+            google_docs_api_helpers.update_document(
+                requests=requests, document_id=document_id)
+        elif text_item['text_type'] == 'h1' and text_item['h3_present']:
+            header = '\n' + text_item['text']
+            requests = google_docs_formatting_helpers.create_bold_header(
+                header)
+            google_docs_api_helpers.update_document(
+                requests=requests, document_id=document_id)
+        elif text_item['text_type'] == 'h2' and text_item['h3_present']:
+            header = '\n' + text_item['text']
+            requests = google_docs_formatting_helpers.create_header(header)
+            google_docs_api_helpers.update_document(
+                requests=requests, document_id=document_id)
+        elif text_item['text_type'] == 'h3':
+            header = '\n' + text_item['text']
+            requests = google_docs_formatting_helpers.create_bold_sub_header(
+                header)
+            google_docs_api_helpers.update_document(
+                requests=requests, document_id=document_id)
+        elif text_item['text_type'] == 'h1' and text_item['h3_present'] != True:
+            header = '\n' + text_item['text']
+            requests = google_docs_formatting_helpers.create_header(header)
+            google_docs_api_helpers.update_document(
+                requests=requests, document_id=document_id)
+        elif text_item['text_type'] == 'h2' and text_item['h3_present'] != True:
+            header = '\n' + text_item['text']
+            requests = google_docs_formatting_helpers.create_bold_sub_header(
+                header)
+            google_docs_api_helpers.update_document(
+                requests=requests, document_id=document_id)
 
 
 get_headers()
 get_header_positions()
 generate_text_snippits()
 process_document_with_openai()
-prep_document_outline_for_google_doc()
+add_outline_to_google_doc()

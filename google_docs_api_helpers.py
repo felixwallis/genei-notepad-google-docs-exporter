@@ -8,26 +8,14 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-from google_docs_formatting_helpers import create_title
-
-# If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/documents']
 
-# The ID of a sample document.
-DOCUMENT_ID = '195j9eDD3ccgjQRttHhJPymLJUCOUjs-jmwTrekvdjFE'
 
-
-def main():
-    """Shows basic usage of the Docs API.
-    Prints the title of a sample document.
-    """
+def create_document(title):
+    global creds
     creds = None
-    # The file token.json stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
     if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
@@ -41,25 +29,23 @@ def main():
 
     try:
         service = build('docs', 'v1', credentials=creds)
-
-        title = 'My Document'
+        title = title
         body = {
             'title': title
         }
+        doc = service.documents().create(body=body).execute()
+        print('Created document with title: {0}'.format(doc.get('title')))
+        return doc.get('documentId')
 
-        document = service.documents().create(body=body).execute()
-        document_id = document.get('documentId')
-
-        title_text = title
-        requests = create_title(title_text)
-
-        service.documents().batchUpdate(documentId=document_id,
-                                        body={'requests': requests}).execute()
-
-        print('Created document with title: {0}'.format(document.get('title')))
     except HttpError as err:
         print(err)
 
 
-if __name__ == '__main__':
-    main()
+def update_document(requests, document_id):
+    try:
+        service = build('docs', 'v1', credentials=creds)
+        service.documents().batchUpdate(documentId=document_id,
+                                        body={'requests': requests}).execute()
+        print('Successfully updated document:', document_id)
+    except HttpError as err:
+        print(err)
