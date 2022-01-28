@@ -8,6 +8,8 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+from google_docs_helpers import create_title
+
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/documents']
 
@@ -49,52 +51,7 @@ def main():
         document_id = document.get('documentId')
 
         title_text = title
-        text = '\n\nHobbes defines liberty in two ways: in the state of nature, "Liberty, is understood, according to the proper signification of the word, the absence of externall impediments." \nCivil liberty, under government, is the absence of law or other sovereign commandment. "The Greatest Liberty of Subjects, dependeth on the Silence of the Law."\nBoth accounts make it entirely possible to act voluntarily but from fear, and neither suggests that freedom has anything to do with the freedom of the will. \nIn this definition, Hobbes wanted to enforce the claim thatfreedom was not a matter of form of government. \nFreedom and government are antithetical, because we give up all our rights when we enter political society, savethe right to defend ourselves against the immediate threat of death and injury.'
-        requests = [
-            {
-                'insertText': {
-                    'location': {
-                        'index': 1,
-                    },
-                    'text': text
-                }
-            },
-            {
-                'insertText': {
-                    'location': {
-                        'index': 1,
-                    },
-                    'text': title_text
-                }
-            },
-            {
-                'updateTextStyle': {
-                    'range': {
-                        'startIndex': 1,
-                        'endIndex': len(title_text) + len(text)
-                    },
-                    'textStyle': {
-                        'weightedFontFamily': {
-                            'fontFamily': 'Georgia'
-                        }
-                    },
-                    'fields': 'weightedFontFamily'
-                }
-            },
-            {
-                'updateParagraphStyle': {
-                    'range': {
-                        'startIndex': 1,
-                        'endIndex': len(title_text)
-                    },
-                    'paragraphStyle': {
-                        'namedStyleType': 'HEADING_1',
-                        'alignment': 'CENTER',
-                    },
-                    'fields': '*'
-                }
-            }
-        ]
+        requests = create_title(title_text)
 
         service.documents().batchUpdate(documentId=document_id,
                                         body={'requests': requests}).execute()
