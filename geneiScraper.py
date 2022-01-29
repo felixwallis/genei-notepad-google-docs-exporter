@@ -190,6 +190,7 @@ def process_document_with_openai():
             processed_document_outline.append(text_element)
         else:
             processed_document_outline.append(text_element)
+        print('Snippet complete')
 
     # with open('dev_processed_text.json', 'r') as fp:
     #     json_data = json.load(fp)
