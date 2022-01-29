@@ -176,7 +176,7 @@ def process_document_with_openai():
                 new_text_prompt = 'Turn these sentences into a paragraph: ' + \
                     text_element['text']
                 processed_paragraph = make_openai_request(
-                    text_prompt=new_text_prompt, model='text-curie-001')['choices'][0]['text']
+                    text_prompt=new_text_prompt, model='text-davinci-001')['choices'][0]['text']
                 reprocessed_text_list = []
                 for sentence in processed_paragraph.split('. '):
                     if '\n' not in sentence:
