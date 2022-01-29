@@ -91,7 +91,8 @@ def get_header_positions():
         header_info = {
             'header': header,
             'header_position': header_position,
-            'header_type': 'h3'
+            'header_type': 'h3',
+            'h3_present': h3_present
         }
         header_positions.append(header_info)
 
