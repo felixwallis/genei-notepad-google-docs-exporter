@@ -15,6 +15,8 @@ h3_text = []
 
 
 def get_headers():
+    print('Retrieving headers...')
+
     with open('genei_notepad.html') as fp:
         soup = BeautifulSoup(fp, 'html.parser')
         all_text = soup.find_all(text=True)
@@ -58,6 +60,8 @@ def get_headers():
 
 
 def get_header_positions():
+    print('Getting header positions...')
+
     global header_positions
     header_positions = []
     if len(h3_text):
@@ -96,18 +100,20 @@ def get_header_positions():
 
 
 def retrieve_text_between_markers(marker_1, marker_2, header_length):
-    text_snippit = ''
+    text_snippet = ''
     for index, char in enumerate(all_text_string):
         if marker_2 is not None:
             if index >= (marker_1 + header_length) and index < marker_2:
-                text_snippit += char
+                text_snippet += char
         else:
             if index >= (marker_1 + header_length):
-                text_snippit += char
-    return text_snippit
+                text_snippet += char
+    return text_snippet
 
 
-def generate_text_snippits():
+def generate_text_snippets():
+    print('Generating text snippets...')
+
     global document_outline
     document_outline = []
     for index, header_position in enumerate(header_positions):
@@ -148,6 +154,8 @@ def make_openai_request(text_prompt, model):
 
 
 def process_document_with_openai():
+    print('Processing text snippets...')
+
     api_key = ''
     with open('OpenAI_API_Key.json', 'r') as fp:
         json_data = json.load(fp)
@@ -155,37 +163,36 @@ def process_document_with_openai():
     openai.api_key = api_key
 
     global processed_document_outline
-    # processed_document_outline = []
-    # for text_element in document_outline:
-    #     if text_element['text_type'] == 'unstyled':
-    #         text_prompt = 'Turn these sentences into bullet points: ' + \
-    #             text_element['text']
-    #         processed_text = make_openai_request(
-    #             text_prompt=text_prompt, model='text-davinci-001')['choices'][0]['text']
-    #         if len(processed_text) > (len(text_element['text']) * 0.8):
-    #             text_element['processed_text'] = processed_text
-    #         else:
-    #             new_text_prompt = 'Turn these sentences into a paragraph: ' + \
-    #                 text_element['text']
-    #             processed_paragraph = make_openai_request(
-    #                 text_prompt=new_text_prompt, model='text-curie-001')['choices'][0]['text']
-    #             reprocessed_text_list = []
-    #             for sentence in processed_paragraph.split('. '):
-    #                 if '\n' not in sentence:
-    #                     bullet_point = '\n' + sentence
-    #                     reprocessed_text_list.append(bullet_point)
-    #                 else:
-    #                     reprocessed_text_list.append(sentence)
-    #             text_element['processed_text'] = '.'.join(
-    #                 reprocessed_text_list)
-    #         processed_document_outline.append(text_element)
-    #     else:
-    #         processed_document_outline.append(text_element)
-    # print(json.dumps(processed_document_outline))
+    processed_document_outline = []
+    for text_element in document_outline:
+        if text_element['text_type'] == 'unstyled':
+            text_prompt = 'Turn these sentences into bullet points: ' + \
+                text_element['text']
+            processed_text = make_openai_request(
+                text_prompt=text_prompt, model='text-davinci-001')['choices'][0]['text']
+            if len(processed_text) > (len(text_element['text']) * 0.8):
+                text_element['processed_text'] = processed_text
+            else:
+                new_text_prompt = 'Turn these sentences into a paragraph: ' + \
+                    text_element['text']
+                processed_paragraph = make_openai_request(
+                    text_prompt=new_text_prompt, model='text-curie-001')['choices'][0]['text']
+                reprocessed_text_list = []
+                for sentence in processed_paragraph.split('. '):
+                    if '\n' not in sentence:
+                        bullet_point = '\n' + sentence
+                        reprocessed_text_list.append(bullet_point)
+                    else:
+                        reprocessed_text_list.append(sentence)
+                text_element['processed_text'] = '.'.join(
+                    reprocessed_text_list)
+            processed_document_outline.append(text_element)
+        else:
+            processed_document_outline.append(text_element)
 
-    with open('dev_processed_text.json', 'r') as fp:
-        json_data = json.load(fp)
-        processed_document_outline = json_data['processed_document_outline']
+    # with open('dev_processed_text.json', 'r') as fp:
+    #     json_data = json.load(fp)
+    #     processed_document_outline = json_data['processed_document_outline']
 
 
 def add_outline_to_google_doc():
@@ -205,37 +212,40 @@ def add_outline_to_google_doc():
             google_docs_api_helpers.update_document(
                 requests=requests, document_id=document_id)
         elif text_item['text_type'] == 'h1' and text_item['h3_present']:
-            header = '\n' + text_item['text']
+            header = '\n\n' + text_item['text']
             requests = google_docs_formatting_helpers.create_bold_header(
                 header)
             google_docs_api_helpers.update_document(
                 requests=requests, document_id=document_id)
         elif text_item['text_type'] == 'h2' and text_item['h3_present']:
-            header = '\n' + text_item['text']
+            header = '\n\n' + text_item['text']
             requests = google_docs_formatting_helpers.create_header(header)
             google_docs_api_helpers.update_document(
                 requests=requests, document_id=document_id)
         elif text_item['text_type'] == 'h3':
-            header = '\n' + text_item['text']
+            header = '\n\n' + text_item['text']
             requests = google_docs_formatting_helpers.create_bold_sub_header(
                 header)
             google_docs_api_helpers.update_document(
                 requests=requests, document_id=document_id)
         elif text_item['text_type'] == 'h1' and text_item['h3_present'] != True:
-            header = '\n' + text_item['text']
+            header = '\n\n' + text_item['text']
             requests = google_docs_formatting_helpers.create_header(header)
             google_docs_api_helpers.update_document(
                 requests=requests, document_id=document_id)
         elif text_item['text_type'] == 'h2' and text_item['h3_present'] != True:
-            header = '\n' + text_item['text']
+            header = '\n\n' + text_item['text']
             requests = google_docs_formatting_helpers.create_bold_sub_header(
                 header)
             google_docs_api_helpers.update_document(
                 requests=requests, document_id=document_id)
+    requests = google_docs_formatting_helpers.create_title(title)
+    google_docs_api_helpers.update_document(
+        requests=requests, document_id=document_id)
 
 
 get_headers()
 get_header_positions()
-generate_text_snippits()
+generate_text_snippets()
 process_document_with_openai()
 add_outline_to_google_doc()

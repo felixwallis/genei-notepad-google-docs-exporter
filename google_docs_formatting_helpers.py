@@ -83,6 +83,14 @@ def create_bold_header(header):
                 },
                 'fields': 'bold'
             }
+        },
+        {
+            'deleteParagraphBullets': {
+                'range': {
+                    'startIndex': 1,
+                    'endIndex':  len(header) + 1
+                },
+            }
         }
     ]
     return requests
@@ -114,6 +122,14 @@ def create_header(header):
                     },
                 },
                 'fields': 'weightedFontFamily, fontSize'
+            }
+        },
+        {
+            'deleteParagraphBullets': {
+                'range': {
+                    'startIndex': 1,
+                    'endIndex':  len(header) + 1
+                },
             }
         }
     ]
@@ -161,6 +177,14 @@ def create_bold_sub_header(sub_header):
                 },
                 'fields': 'bold'
             }
+        },
+        {
+            'deleteParagraphBullets': {
+                'range': {
+                    'startIndex': 1,
+                    'endIndex':  len(sub_header) + 1
+                },
+            }
         }
     ]
     return requests
@@ -190,9 +214,13 @@ def create_text_with_bullet_points(text):
                 'textStyle': {
                     'weightedFontFamily': {
                         'fontFamily': 'Georgia'
-                    }
+                    },
+                    'fontSize': {
+                        'magnitude': 11,
+                        'unit': 'PT'
+                    },
                 },
-                'fields': 'weightedFontFamily'
+                'fields': 'weightedFontFamily, fontSize'
             }
         },
         {
