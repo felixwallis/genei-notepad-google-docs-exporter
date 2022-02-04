@@ -131,11 +131,12 @@ def generate_text_snippets():
             marker_2 = None
         text_snippt = retrieve_text_between_markers(
             marker_1, marker_2, len(header_position['header']))
-        text_after_header = {
-            'text': text_snippt,
-            'text_type': 'unstyled'
-        }
-        document_outline.append(text_after_header)
+        if len(text_snippt):
+            text_after_header = {
+                'text': text_snippt,
+                'text_type': 'unstyled'
+            }
+            document_outline.append(text_after_header)
 
 
 def make_openai_request(text_prompt, model):
