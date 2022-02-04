@@ -197,6 +197,23 @@ def process_document_with_openai():
     #     processed_document_outline = json_data['processed_document_outline']
 
 
+def correct_carriage_returns(text):
+    first_four_chars = ''
+    for index, char in enumerate(text):
+        if index < 4:
+            first_four_chars += char
+        else:
+            break
+    if '\n' in first_four_chars and first_four_chars != '\n\n':
+        cleaned_text = text[2:]
+        return cleaned_text
+    elif first_four_chars == '\n\n':
+        cleaned_text = text[2:]
+        return cleaned_text
+    else:
+        return text
+
+
 def add_outline_to_google_doc():
     document_id = google_docs_api_helpers.create_document(title)
     for text_item in reversed(processed_document_outline):
@@ -207,36 +224,37 @@ def add_outline_to_google_doc():
                 '\n-', '\n')
             text_with_cleaned_hyphens = text_without_all_bullet_points.replace(
                 '- ', '')
-            cleaned_text = re.sub(r'\.(?=\S)([A-Z])', ('. ' + r'\1'),
-                                  text_with_cleaned_hyphens)
+            text_with_corerct_spacing = re.sub(r'\.(?=\S)([A-Z])', ('. ' + r'\1'),
+                                               text_with_cleaned_hyphens)
+            cleaned_text = correct_carriage_returns(text_with_corerct_spacing)
             requests = google_docs_formatting_helpers.create_text_with_bullet_points(
                 cleaned_text)
             google_docs_api_helpers.update_document(
                 requests=requests, document_id=document_id)
         elif text_item['text_type'] == 'h1' and text_item['h3_present']:
-            header = '\n\n' + text_item['text']
+            header = text_item['text']
             requests = google_docs_formatting_helpers.create_bold_header(
                 header)
             google_docs_api_helpers.update_document(
                 requests=requests, document_id=document_id)
         elif text_item['text_type'] == 'h2' and text_item['h3_present']:
-            header = '\n\n' + text_item['text']
+            header = text_item['text']
             requests = google_docs_formatting_helpers.create_header(header)
             google_docs_api_helpers.update_document(
                 requests=requests, document_id=document_id)
         elif text_item['text_type'] == 'h3':
-            header = '\n\n' + text_item['text']
+            header = text_item['text']
             requests = google_docs_formatting_helpers.create_bold_sub_header(
                 header)
             google_docs_api_helpers.update_document(
                 requests=requests, document_id=document_id)
         elif text_item['text_type'] == 'h1' and text_item['h3_present'] != True:
-            header = '\n\n' + text_item['text']
+            header = text_item['text']
             requests = google_docs_formatting_helpers.create_header(header)
             google_docs_api_helpers.update_document(
                 requests=requests, document_id=document_id)
         elif text_item['text_type'] == 'h2' and text_item['h3_present'] != True:
-            header = '\n\n' + text_item['text']
+            header = text_item['text']
             requests = google_docs_formatting_helpers.create_bold_sub_header(
                 header)
             google_docs_api_helpers.update_document(

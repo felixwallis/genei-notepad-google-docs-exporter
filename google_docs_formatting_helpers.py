@@ -1,4 +1,6 @@
 def create_title(title):
+    title = title + '\n'
+
     requests = [
         {
             'insertText': {
@@ -45,6 +47,8 @@ def create_title(title):
 
 
 def create_bold_header(header):
+    header = '\n' + header + '\n'
+
     requests = [
         {
             'insertText': {
@@ -97,6 +101,8 @@ def create_bold_header(header):
 
 
 def create_header(header):
+    header = '\n' + header + '\n'
+
     requests = [
         {
             'insertText': {
@@ -137,7 +143,7 @@ def create_header(header):
 
 
 def create_bold_sub_header(sub_header):
-    sub_header = sub_header + ':'
+    sub_header = '\n' + sub_header + ':'
 
     requests = [
         {
@@ -195,6 +201,7 @@ def create_text_with_bullet_points(text):
     for char in text:
         if char != '\n':
             bullet_start_index = text.index(char)
+    text = '\n' + text + '\n'
 
     requests = [
         {
