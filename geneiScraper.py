@@ -5,57 +5,47 @@ import openai
 import google_docs_formatting_helpers
 import google_docs_api_helpers
 
-print('Give this document a name: ')
-title = input()
 
-h1_text = []
-h2_text = []
-h3_text = []
+def get_text(all_text):
+    global all_text_string
+    all_text_string = ''
+    for text in all_text:
+        all_text_list = []
+        rl = re.split(r'\s', text)
+        for word in rl:
+            if len(word):
+                all_text_list.append(word)
+        text = ' '.join(all_text_list)
+        all_text_string += text
 
 
-def get_headers():
-    print('Retrieving headers...')
+def create_header_arrays(header_elements):
+    global h1_text
+    h1_text = []
+    global h2_text
+    h2_text = []
+    global h3_text
+    h3_text = []
+    for header_element in header_elements:
+        words = re.split(r'\s', header_element.get_text())
+        for word in words:
+            if len(word) and header_element.name == 'h1':
+                h1_text.append(word)
+            if len(word) and header_element.name == 'h2':
+                h2_text.append(word)
+            if len(word) and header_element.name == 'h3':
+                h3_text.append(word)
+
+
+def scrape_content():
+    print('Retrieving content...')
 
     with open('genei_notepad.html') as fp:
         soup = BeautifulSoup(fp, 'html.parser')
-        all_text = soup.find_all(text=True)
-        h1_elements = soup.find_all('h1')
-        h2_elements = soup.find_all('h2')
-        h3_elements = soup.find_all('h3')
-        global all_text_string
-        all_text_string = ''
-        for text in all_text:
-            all_text_list = []
-            rl = re.split(r'\s', text)
-            for word in rl:
-                if len(word):
-                    all_text_list.append(word)
-            text = ' '.join(all_text_list)
-            all_text_string += text
-        for h1_element in h1_elements:
-            h1_text_list = []
-            rl = re.split(r'\s', h1_element.get_text())
-            for word in rl:
-                if len(word):
-                    h1_text_list.append(word)
-            header = ' '.join(h1_text_list)
-            h1_text.append(header)
-        for h2_element in h2_elements:
-            h2_text_list = []
-            rl = re.split(r'\s', h2_element.get_text())
-            for word in rl:
-                if len(word):
-                    h2_text_list.append(word)
-            header = ' '.join(h2_text_list)
-            h2_text.append(header)
-        for h3_element in h3_elements:
-            h3_text_list = []
-            rl = re.split(r'\s', h3_element.get_text())
-            for word in rl:
-                if len(word):
-                    h3_text_list.append(word)
-            header = ' '.join(h3_text_list)
-            h3_text.append(header)
+        get_text(soup.find_all(text=True))
+        create_header_arrays(soup.find_all('h1'))
+        create_header_arrays(soup.find_all('h2'))
+        create_header_arrays(soup.find_all('h3'))
 
 
 def get_header_positions():
@@ -165,36 +155,36 @@ def process_document_with_openai():
 
     global processed_document_outline
     processed_document_outline = []
-    for text_element in document_outline:
-        if text_element['text_type'] == 'unstyled':
-            text_prompt = 'Turn these sentences into bullet points: ' + \
-                text_element['text']
-            processed_text = make_openai_request(
-                text_prompt=text_prompt, model='text-davinci-001')['choices'][0]['text']
-            if len(processed_text) > (len(text_element['text']) * 0.8):
-                text_element['processed_text'] = processed_text
-            else:
-                new_text_prompt = 'Turn these sentences into a paragraph: ' + \
-                    text_element['text']
-                processed_paragraph = make_openai_request(
-                    text_prompt=new_text_prompt, model='text-davinci-001')['choices'][0]['text']
-                reprocessed_text_list = []
-                for sentence in processed_paragraph.split('. '):
-                    if '\n' not in sentence:
-                        bullet_point = '\n' + sentence
-                        reprocessed_text_list.append(bullet_point)
-                    else:
-                        reprocessed_text_list.append(sentence)
-                text_element['processed_text'] = '.'.join(
-                    reprocessed_text_list)
-            processed_document_outline.append(text_element)
-        else:
-            processed_document_outline.append(text_element)
-        print('Snippet complete')
+    # for text_element in document_outline:
+    #     if text_element['text_type'] == 'unstyled':
+    #         text_prompt = 'Turn these sentences into bullet points: ' + \
+    #             text_element['text']
+    #         processed_text = make_openai_request(
+    #             text_prompt=text_prompt, model='text-davinci-001')['choices'][0]['text']
+    #         if len(processed_text) > (len(text_element['text']) * 0.8):
+    #             text_element['processed_text'] = processed_text
+    #         else:
+    #             new_text_prompt = 'Turn these sentences into a paragraph: ' + \
+    #                 text_element['text']
+    #             processed_paragraph = make_openai_request(
+    #                 text_prompt=new_text_prompt, model='text-davinci-001')['choices'][0]['text']
+    #             reprocessed_text_list = []
+    #             for sentence in processed_paragraph.split('. '):
+    #                 if '\n' not in sentence:
+    #                     bullet_point = '\n' + sentence
+    #                     reprocessed_text_list.append(bullet_point)
+    #                 else:
+    #                     reprocessed_text_list.append(sentence)
+    #             text_element['processed_text'] = '.'.join(
+    #                 reprocessed_text_list)
+    #         processed_document_outline.append(text_element)
+    #     else:
+    #         processed_document_outline.append(text_element)
+    #     print('Snippet complete')
 
-    # with open('dev_processed_text.json', 'r') as fp:
-    #     json_data = json.load(fp)
-    #     processed_document_outline = json_data['processed_document_outline']
+    with open('dev_processed_text.json', 'r') as fp:
+        json_data = json.load(fp)
+        processed_document_outline = json_data['processed_document_outline']
 
 
 def correct_carriage_returns(text):
@@ -264,8 +254,13 @@ def add_outline_to_google_doc():
         requests=requests, document_id=document_id)
 
 
-get_headers()
-get_header_positions()
-generate_text_snippets()
-process_document_with_openai()
-add_outline_to_google_doc()
+if __name__ == '__main__':
+    print('Give this document a name: ')
+    global title
+    title = input()
+
+    scrape_content()
+    get_header_positions()
+    generate_text_snippets()
+    process_document_with_openai()
+    add_outline_to_google_doc()
