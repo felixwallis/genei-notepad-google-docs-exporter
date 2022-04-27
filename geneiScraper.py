@@ -52,6 +52,29 @@ def header_position(header, header_type, h3_present, header_previous_occurance_p
     }
 
 
+def get_header_positions(headers, header_type, h3_present):
+    header_type_specific_header_positions = []
+    headers_dict = {}
+    for index, header in enumerate(headers):
+        try:
+            headers_dict[header].append(index)
+        except:
+            headers_dict[header] = [index]
+        header_occurance_array = headers_dict[header]
+        if len(header_occurance_array) == 1:
+            header_type_specific_header_positions.append(header_position(
+                header, header_type, h3_present))
+        elif len(header_occurance_array) > 1:
+            header_previous_occurance_index = header_occurance_array[len(
+                header_occurance_array)-2]
+            header_previous_occurance_position = header_type_specific_header_positions[
+                header_previous_occurance_index]['header_position']
+            header_type_specific_header_positions.append(header_position(
+                header, header_type, h3_present, header_previous_occurance_position))
+
+    return header_type_specific_header_positions
+
+
 def scrape_content():
     print('Scraping content...')
 
@@ -70,51 +93,12 @@ def scrape_content():
 
     print('Getting header positions...')
     header_positions = []
-    h1_headers_dict = {}
-    for index, header in enumerate(h1_headers):
-        try:
-            h1_headers_dict[header].append(index)
-        except:
-            h1_headers_dict[header] = [index]
-        if len(h1_headers_dict[header]) == 1:
-            header_positions.append(header_position(header, 'h1', h3_present))
-        elif len(h1_headers_dict[header]) > 1:
-            header_previous_occurance_index = h1_headers_dict[header][len(
-                h1_headers_dict[header])-2]
-            header_previous_occurance_position = header_positions[
-                header_previous_occurance_index]['header_position']
-            header_positions.append(header_position(
-                header, 'h1', h3_present, header_previous_occurance_position))
-    h2_headers_dict = {}
-    for index, header in enumerate(h2_headers):
-        try:
-            h2_headers_dict[header].append(index)
-        except:
-            h2_headers_dict[header] = [index]
-        if len(h2_headers_dict[header]) == 1:
-            header_positions.append(header_position(header, 'h2', h3_present))
-        elif len(h2_headers_dict[header]) > 1:
-            header_previous_occurance_index = h2_headers_dict[header][len(
-                h2_headers_dict[header])-2]
-            header_previous_occurance_position = header_positions[
-                header_previous_occurance_index]['header_position']
-            header_positions.append(header_position(
-                header, 'h2', h3_present, header_previous_occurance_position))
-    h3_headers_dict = {}
-    for index, header in enumerate(h3_headers):
-        try:
-            h3_headers_dict[header].append(index)
-        except:
-            h3_headers_dict[header] = [index]
-        if len(h3_headers_dict[header]) == 1:
-            header_positions.append(header_position(header, 'h3', h3_present))
-        elif len(h3_headers_dict[header]) > 1:
-            header_previous_occurance_index = h3_headers_dict[header][len(
-                h3_headers_dict[header])-2]
-            header_previous_occurance_position = header_positions[
-                header_previous_occurance_index]['header_position']
-            header_positions.append(header_position(
-                header, 'h3', h3_present, header_previous_occurance_position))
+    for header_position in get_header_positions(h1_headers, 'h1', h3_present):
+        header_positions.append(header_position)
+    for header_position in get_header_positions(h1_headers, 'h2', h3_present):
+        header_positions.append(header_position)
+    for header_position in get_header_positions(h1_headers, 'h3', h3_present):
+        header_positions.append(header_position)
 
     header_positions.sort(
         key=lambda item: item['header_position'])
