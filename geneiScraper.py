@@ -1,7 +1,9 @@
+from email import header
 from bs4 import BeautifulSoup
 import re
 import json
 import openai
+from requests import get
 import google_docs_formatting_helpers
 import google_docs_api_helpers
 
@@ -20,73 +22,104 @@ def get_text(all_text):
 
 
 def create_header_arrays(header_elements):
-    global h1_text
-    h1_text = []
-    global h2_text
-    h2_text = []
-    global h3_text
-    h3_text = []
+    header_text = []
     for header_element in header_elements:
         words = re.split(r'\s', header_element.get_text())
+        words_in_header = []
         for word in words:
-            if len(word) and header_element.name == 'h1':
-                h1_text.append(word)
-            if len(word) and header_element.name == 'h2':
-                h2_text.append(word)
-            if len(word) and header_element.name == 'h3':
-                h3_text.append(word)
+            if len(word):
+                words_in_header.append(word)
+        header = ' '.join(words_in_header)
+        header_text.append(header)
+
+    return header_text
+
+
+def header_position(header, header_type, h3_present, header_previous_occurance_position=None):
+    if header_previous_occurance_position == None:
+        header_index = all_text_string.index(header)
+    else:
+        text_to_search = all_text_string[header_previous_occurance_position + len(header):
+                                         len(all_text_string)]
+        header_index = text_to_search.index(
+            header) + (len(all_text_string) - len(text_to_search))
+
+    return {
+        'header': header,
+        'header_position': header_index,
+        'header_type': header_type,
+        'h3_present': h3_present
+    }
 
 
 def scrape_content():
-    print('Retrieving content...')
+    print('Scraping content...')
 
     with open('genei_notepad.html') as fp:
         soup = BeautifulSoup(fp, 'html.parser')
         get_text(soup.find_all(text=True))
-        create_header_arrays(soup.find_all('h1'))
-        create_header_arrays(soup.find_all('h2'))
-        create_header_arrays(soup.find_all('h3'))
+        h1_headers = create_header_arrays(soup.find_all('h1'))
+        h2_headers = create_header_arrays(soup.find_all('h2'))
+        h3_headers = create_header_arrays(soup.find_all('h3'))
 
-
-def get_header_positions():
-    print('Getting header positions...')
-
-    global header_positions
-    header_positions = []
-    if len(h3_text):
+    # check if h3 headers are present for google drive formatting
+    if len(h3_headers):
         h3_present = True
     else:
         h3_present = False
-    for header in h1_text:
-        header_position = all_text_string.index(header)
-        header_info = {
-            'header': header,
-            'header_position': header_position,
-            'header_type': 'h1',
-            'h3_present': h3_present
-        }
-        header_positions.append(header_info)
-    for header in h2_text:
-        header_position = all_text_string.index(header)
-        header_info = {
-            'header': header,
-            'header_position': header_position,
-            'header_type': 'h2',
-            'h3_present': h3_present
-        }
-        header_positions.append(header_info)
-    for header in h3_text:
-        header_position = all_text_string.index(header)
-        header_info = {
-            'header': header,
-            'header_position': header_position,
-            'header_type': 'h3',
-            'h3_present': h3_present
-        }
-        header_positions.append(header_info)
+
+    print('Getting header positions...')
+    header_positions = []
+    h1_headers_dict = {}
+    for index, header in enumerate(h1_headers):
+        try:
+            h1_headers_dict[header].append(index)
+        except:
+            h1_headers_dict[header] = [index]
+        if len(h1_headers_dict[header]) == 1:
+            header_positions.append(header_position(header, 'h1', h3_present))
+        elif len(h1_headers_dict[header]) > 1:
+            header_previous_occurance_index = h1_headers_dict[header][len(
+                h1_headers_dict[header])-2]
+            header_previous_occurance_position = header_positions[
+                header_previous_occurance_index]['header_position']
+            header_positions.append(header_position(
+                header, 'h1', h3_present, header_previous_occurance_position))
+    h2_headers_dict = {}
+    for index, header in enumerate(h2_headers):
+        try:
+            h2_headers_dict[header].append(index)
+        except:
+            h2_headers_dict[header] = [index]
+        if len(h2_headers_dict[header]) == 1:
+            header_positions.append(header_position(header, 'h2', h3_present))
+        elif len(h2_headers_dict[header]) > 1:
+            header_previous_occurance_index = h2_headers_dict[header][len(
+                h2_headers_dict[header])-2]
+            header_previous_occurance_position = header_positions[
+                header_previous_occurance_index]['header_position']
+            header_positions.append(header_position(
+                header, 'h2', h3_present, header_previous_occurance_position))
+    h3_headers_dict = {}
+    for index, header in enumerate(h3_headers):
+        try:
+            h3_headers_dict[header].append(index)
+        except:
+            h3_headers_dict[header] = [index]
+        if len(h3_headers_dict[header]) == 1:
+            header_positions.append(header_position(header, 'h3', h3_present))
+        elif len(h3_headers_dict[header]) > 1:
+            header_previous_occurance_index = h3_headers_dict[header][len(
+                h3_headers_dict[header])-2]
+            header_previous_occurance_position = header_positions[
+                header_previous_occurance_index]['header_position']
+            header_positions.append(header_position(
+                header, 'h3', h3_present, header_previous_occurance_position))
 
     header_positions.sort(
         key=lambda item: item['header_position'])
+
+    print(header_positions)
 
 
 def retrieve_text_between_markers(marker_1, marker_2, header_length):
@@ -260,7 +293,7 @@ if __name__ == '__main__':
     title = input()
 
     scrape_content()
-    get_header_positions()
-    generate_text_snippets()
-    process_document_with_openai()
-    add_outline_to_google_doc()
+    # get_header_info()
+    # generate_text_snippets()
+    # process_document_with_openai()
+    # add_outline_to_google_doc()
