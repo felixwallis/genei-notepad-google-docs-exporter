@@ -35,7 +35,7 @@ def create_header_arrays(header_elements):
     return header_text
 
 
-def header_position(header, header_type, h3_present, header_previous_occurance_position=None):
+def get_header_position(header, header_type, h3_present, header_previous_occurance_position=None):
     if header_previous_occurance_position == None:
         header_index = all_text_string.index(header)
     else:
@@ -62,14 +62,14 @@ def get_header_positions(headers, header_type, h3_present):
             headers_dict[header] = [index]
         header_occurance_array = headers_dict[header]
         if len(header_occurance_array) == 1:
-            header_type_specific_header_positions.append(header_position(
+            header_type_specific_header_positions.append(get_header_position(
                 header, header_type, h3_present))
         elif len(header_occurance_array) > 1:
             header_previous_occurance_index = header_occurance_array[len(
                 header_occurance_array)-2]
             header_previous_occurance_position = header_type_specific_header_positions[
                 header_previous_occurance_index]['header_position']
-            header_type_specific_header_positions.append(header_position(
+            header_type_specific_header_positions.append(get_header_position(
                 header, header_type, h3_present, header_previous_occurance_position))
 
     return header_type_specific_header_positions
