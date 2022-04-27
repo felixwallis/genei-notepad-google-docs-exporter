@@ -95,9 +95,9 @@ def scrape_content():
     header_positions = []
     for header_position in get_header_positions(h1_headers, 'h1', h3_present):
         header_positions.append(header_position)
-    for header_position in get_header_positions(h1_headers, 'h2', h3_present):
+    for header_position in get_header_positions(h2_headers, 'h2', h3_present):
         header_positions.append(header_position)
-    for header_position in get_header_positions(h1_headers, 'h3', h3_present):
+    for header_position in get_header_positions(h3_headers, 'h3', h3_present):
         header_positions.append(header_position)
 
     header_positions.sort(
