@@ -121,6 +121,73 @@ def generate_text_snippets(header_positions):
     return document_outline
 
 
+def make_openai_request(text_prompt, model):
+    response = openai.Completion.create(
+        engine=model,
+        prompt=text_prompt,
+        temperature=0.7,
+        max_tokens=1000,
+        top_p=1,
+        frequency_penalty=0.5,
+        presence_penalty=0.2
+    )
+    json_object = json.loads(str(response))
+
+    print(json_object)
+
+    return json_object
+
+
+def process_document_with_openai(document_outline):
+    api_key = ''
+    with open('OpenAI_API_Key.json', 'r') as fp:
+        json_data = json.load(fp)
+        api_key = json_data['API_Key']
+    openai.api_key = api_key
+
+    processed_document_outline = []
+    for index, text_element in enumerate(document_outline):
+        if text_element['text_type'] == 'unstyled':
+            text_prompt = 'Turn these sentences into bullet points: ' + \
+                text_element['text']
+            processed_text = make_openai_request(
+                text_prompt, 'text-davinci-001')['choices'][0]['text']
+            # long processed text indicates successful processing by GPT-3
+            if len(processed_text) > (len(text_element['text']) * 0.5):
+                text_element['processed_text'] = processed_text
+            else:
+                print('Poor GTP-3 response. Reprocessing text element...')
+                new_text_prompt = 'Turn these sentences into a paragraph: ' + \
+                    text_element['text']
+                processed_paragraph = make_openai_request(
+                    new_text_prompt, 'text-davinci-001')['choices'][0]['text']
+                # split paragraph at periods and add new lines to turn into bullet points later
+                reprocessed_text = []
+                for sentence in processed_paragraph.split('. '):
+                    if '\n' not in sentence:
+                        new_line = '\n' + sentence
+                        reprocessed_text.append(new_line)
+                    else:
+                        reprocessed_text.append(sentence)
+                text_element['processed_text'] = '.'.join(reprocessed_text)
+            processed_document_outline.append(text_element)
+        else:
+            processed_document_outline.append(text_element)
+        print('Processed text element', (index + 1),
+              'of', len(document_outline))
+
+    return processed_document_outline
+
+
+# only use when testing
+def premade_processed_document_outline():
+    with open('dev_processed_text.json', 'r') as fp:
+        json_data = json.load(fp)
+        processed_document_outline = json_data['processed_document_outline']
+
+    return processed_document_outline
+
+
 def scrape_content():
     print('Scraping content...')
 
@@ -149,66 +216,11 @@ def scrape_content():
     header_positions.sort(
         key=lambda item: item['header_position'])
 
-    print('Generating text snippits')
-    print(generate_text_snippets(header_positions))
+    print('Generating document outline...')
+    document_outline = generate_text_snippets(header_positions)
 
-
-def make_openai_request(text_prompt, model):
-    response = openai.Completion.create(
-        engine=model,
-        prompt=text_prompt,
-        temperature=0.7,
-        max_tokens=1000,
-        top_p=1,
-        frequency_penalty=0.5,
-        presence_penalty=0.2
-    )
-    json_object = json.loads(str(response))
-
-    return json_object
-
-
-def process_document_with_openai():
-    print('Processing text snippets...')
-
-    api_key = ''
-    with open('OpenAI_API_Key.json', 'r') as fp:
-        json_data = json.load(fp)
-        api_key = json_data['API_Key']
-    openai.api_key = api_key
-
-    global processed_document_outline
-    processed_document_outline = []
-    # for text_element in document_outline:
-    #     if text_element['text_type'] == 'unstyled':
-    #         text_prompt = 'Turn these sentences into bullet points: ' + \
-    #             text_element['text']
-    #         processed_text = make_openai_request(
-    #             text_prompt=text_prompt, model='text-davinci-001')['choices'][0]['text']
-    #         if len(processed_text) > (len(text_element['text']) * 0.8):
-    #             text_element['processed_text'] = processed_text
-    #         else:
-    #             new_text_prompt = 'Turn these sentences into a paragraph: ' + \
-    #                 text_element['text']
-    #             processed_paragraph = make_openai_request(
-    #                 text_prompt=new_text_prompt, model='text-davinci-001')['choices'][0]['text']
-    #             reprocessed_text_list = []
-    #             for sentence in processed_paragraph.split('. '):
-    #                 if '\n' not in sentence:
-    #                     bullet_point = '\n' + sentence
-    #                     reprocessed_text_list.append(bullet_point)
-    #                 else:
-    #                     reprocessed_text_list.append(sentence)
-    #             text_element['processed_text'] = '.'.join(
-    #                 reprocessed_text_list)
-    #         processed_document_outline.append(text_element)
-    #     else:
-    #         processed_document_outline.append(text_element)
-    #     print('Snippet complete')
-
-    with open('dev_processed_text.json', 'r') as fp:
-        json_data = json.load(fp)
-        processed_document_outline = json_data['processed_document_outline']
+    print('Processing document outline...')
+    print(premade_processed_document_outline())
 
 
 def correct_carriage_returns(text):
