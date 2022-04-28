@@ -75,6 +75,52 @@ def get_header_positions(headers, header_type, h3_present):
     return header_type_specific_header_positions
 
 
+def retrieve_text_between_markers(marker_1, marker_2, header_length):
+    text_snippet = ''
+    for index, char in enumerate(all_text_string):
+        if marker_2 is not None:
+            if index >= (marker_1 + header_length) and index < marker_2:
+                text_snippet += char
+        else:
+            if index >= (marker_1 + header_length):
+                text_snippet += char
+
+    if len(text_snippet):
+        text_snippet_obj = {
+            'text': text_snippet,
+            'text_type': 'unstyled'
+        }
+
+    return text_snippet_obj
+
+
+def generate_text_snippets(header_positions):
+    document_outline = []
+    for index, header_position in enumerate(header_positions):
+        marker_1 = header_position['header_position']
+        if index < len(header_positions) - 1:
+            marker_2 = header_positions[index + 1]['header_position']
+        else:
+            marker_2 = None
+
+        # retrieve text before first header if exists
+        if index == 0 and marker_1 != 0:
+            document_outline.append(retrieve_text_between_markers(
+                0, marker_1, 0))
+
+        header = {
+            'text': header_position['header'],
+            'text_type': header_position['header_type'],
+            'h3_present': header_position['h3_present']
+        }
+        document_outline.append(header)
+
+        document_outline.append(retrieve_text_between_markers(
+            marker_1, marker_2, len(header_position['header'])))
+
+    return document_outline
+
+
 def scrape_content():
     print('Scraping content...')
 
@@ -103,47 +149,8 @@ def scrape_content():
     header_positions.sort(
         key=lambda item: item['header_position'])
 
-    print(header_positions)
-
-
-def retrieve_text_between_markers(marker_1, marker_2, header_length):
-    text_snippet = ''
-    for index, char in enumerate(all_text_string):
-        if marker_2 is not None:
-            if index >= (marker_1 + header_length) and index < marker_2:
-                text_snippet += char
-        else:
-            if index >= (marker_1 + header_length):
-                text_snippet += char
-    return text_snippet
-
-
-def generate_text_snippets():
-    print('Generating text snippets...')
-
-    global document_outline
-    document_outline = []
-    for index, header_position in enumerate(header_positions):
-        header = {
-            'text': header_position['header'],
-            'text_type': header_position['header_type'],
-            'h3_present': header_position['h3_present']
-        }
-        document_outline.append(header)
-
-        marker_1 = header_position['header_position']
-        if index < len(header_positions) - 1:
-            marker_2 = header_positions[index + 1]['header_position']
-        else:
-            marker_2 = None
-        text_snippt = retrieve_text_between_markers(
-            marker_1, marker_2, len(header_position['header']))
-        if len(text_snippt):
-            text_after_header = {
-                'text': text_snippt,
-                'text_type': 'unstyled'
-            }
-            document_outline.append(text_after_header)
+    print('Generating text snippits')
+    print(generate_text_snippets(header_positions))
 
 
 def make_openai_request(text_prompt, model):
