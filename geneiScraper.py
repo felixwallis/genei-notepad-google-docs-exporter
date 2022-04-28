@@ -9,7 +9,9 @@ import google_docs_formatting_helpers
 import google_docs_api_helpers
 
 
+# convert text in genei_notepad.html to string
 def get_all_text(all_text):
+    # store text string globally for future functions
     global all_text_string
     all_text_string = ''
     for text in all_text:
@@ -22,6 +24,7 @@ def get_all_text(all_text):
         all_text_string += text
 
 
+# return all headers of a given type as an array
 def create_header_arrays(header_elements):
     header_text = []
     for header_element in header_elements:
@@ -36,6 +39,8 @@ def create_header_arrays(header_elements):
     return header_text
 
 
+# return index position of a specific header in all_text_string
+# complexity is added by handling duplicate headers
 def get_header_position(header, header_type, h3_present, header_previous_occurance_position=None):
     if header_previous_occurance_position == None:
         header_index = all_text_string.index(header)
@@ -53,6 +58,8 @@ def get_header_position(header, header_type, h3_present, header_previous_occuran
     }
 
 
+# return index positions of all headers of a given type in all_text_string
+# complexity is added by handling duplicate headers
 def get_header_positions(headers, header_type, h3_present):
     header_type_specific_header_positions = []
     headers_dict = {}
@@ -76,6 +83,7 @@ def get_header_positions(headers, header_type, h3_present):
     return header_type_specific_header_positions
 
 
+# return text between two headers from all_text_string
 def retrieve_text_between_markers(marker_1, marker_2, header_length):
     text_snippet = ''
     for index, char in enumerate(all_text_string):
@@ -94,6 +102,7 @@ def retrieve_text_between_markers(marker_1, marker_2, header_length):
         return text_snippet_obj
 
 
+# return genei_notepad.html outline based on headers, header positions, and text between headers
 def generate_text_snippets(header_positions):
     document_outline = []
     for index, header_position in enumerate(header_positions):
@@ -103,7 +112,7 @@ def generate_text_snippets(header_positions):
         else:
             marker_2 = None
 
-        # retrieve text before first header if exists
+        # retrieve text before first header if it exists
         if index == 0 and marker_1 != 0:
             document_outline.append(retrieve_text_between_markers(
                 0, marker_1, 0))
@@ -123,6 +132,7 @@ def generate_text_snippets(header_positions):
     return document_outline
 
 
+# return JSON object from generic GPT-3 request
 def make_openai_request(text_prompt, model):
     response = openai.Completion.create(
         engine=model,
@@ -138,12 +148,13 @@ def make_openai_request(text_prompt, model):
     return json_object
 
 
+# return a text string turned into bullet points by GPT-3
 def process_text_snippet_with_openai(text_to_process):
     text_prompt = 'Turn these sentences into bullet points: ' + \
         text_to_process
     processed_text = make_openai_request(
         text_prompt, 'text-davinci-001')['choices'][0]['text']
-    # long processed text indicates successful processing by GPT-3
+    # long processed_text indicates successful processing by GPT-3
     if len(processed_text) > (len(text_to_process) * 0.5):
         return processed_text
     else:
@@ -162,6 +173,7 @@ def process_text_snippet_with_openai(text_to_process):
         return '.'.join(reprocessed_text)
 
 
+# return updated document_outline with text snippets processed using GPT-3
 def process_document_outline(document_outline):
     api_key = ''
     with open('OpenAI_API_Key.json', 'r') as fp:
@@ -188,6 +200,7 @@ def process_document_outline(document_outline):
     return processed_document_outline
 
 
+# example of document outline processed by GPT-3
 # only use when testing
 def premade_processed_document_outline():
     with open('dev_processed_text.json', 'r') as fp:
@@ -197,6 +210,7 @@ def premade_processed_document_outline():
     return processed_document_outline
 
 
+# fix any weird carriage returns added by GTP-3
 def correct_carriage_returns(text):
     first_four_chars = text[:3]
     if '\n\n' in first_four_chars:
@@ -205,6 +219,7 @@ def correct_carriage_returns(text):
         return text
 
 
+# write the GPT-3 processed document_outline to a Google Docs file
 def covert_document_outline_to_google_doc(title, processed_document_outline):
     document_id = google_docs_api_helpers.create_document(title)
     for text_item in reversed(processed_document_outline):
@@ -256,7 +271,7 @@ def covert_document_outline_to_google_doc(title, processed_document_outline):
         requests, document_id)
 
 
-def scrape_content():
+def export_genei_notepad_to_google_doc():
     print('Give this document a name: ')
     title = input()
 
@@ -298,4 +313,4 @@ def scrape_content():
 
 
 if __name__ == '__main__':
-    scrape_content()
+    export_genei_notepad_to_google_doc()
