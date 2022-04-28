@@ -90,8 +90,7 @@ def retrieve_text_between_markers(marker_1, marker_2, header_length):
             'text': text_snippet,
             'text_type': 'unstyled'
         }
-
-    return text_snippet_obj
+        return text_snippet_obj
 
 
 def generate_text_snippets(header_positions):
@@ -115,8 +114,11 @@ def generate_text_snippets(header_positions):
         }
         document_outline.append(header)
 
-        document_outline.append(retrieve_text_between_markers(
-            marker_1, marker_2, len(header_position['header'])))
+        text_between_headers = retrieve_text_between_markers(
+            marker_1, marker_2, len(header_position['header']))
+
+        if text_between_headers:
+            document_outline.append(text_between_headers)
 
     return document_outline
 
@@ -132,8 +134,6 @@ def make_openai_request(text_prompt, model):
         presence_penalty=0.2
     )
     json_object = json.loads(str(response))
-
-    print(json_object)
 
     return json_object
 
@@ -172,9 +172,14 @@ def process_document_outline(document_outline):
     processed_document_outline = []
     for index, text_element in enumerate(document_outline):
         if text_element['text_type'] == 'unstyled':
-            text_element['processed_text'] = process_text_snippet_with_openai(
-                text_element['text'])
-            processed_document_outline.append(text_element)
+            # check length of text to be processed does not exceed openai token limit
+            if (len(text_element['text'])/4) < 1048:
+                text_element['processed_text'] = process_text_snippet_with_openai(
+                    text_element['text'])
+                processed_document_outline.append(text_element)
+            elif (len(text_element['text'])/4) > 2048:
+                print('The following text snippet is too long for GPT-3 processing. Add a heading or subheading to split this snippet into smaller sections: ',
+                      '\n\n', text_element['text'])
         else:
             processed_document_outline.append(text_element)
         print('Processed text element', (index + 1),
