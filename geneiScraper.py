@@ -1,3 +1,4 @@
+from cgitb import text
 from email import header
 from bs4 import BeautifulSoup
 import re
@@ -8,7 +9,7 @@ import google_docs_formatting_helpers
 import google_docs_api_helpers
 
 
-def get_text(all_text):
+def get_all_text(all_text):
     global all_text_string
     all_text_string = ''
     for text in all_text:
@@ -116,7 +117,6 @@ def generate_text_snippets(header_positions):
 
         text_between_headers = retrieve_text_between_markers(
             marker_1, marker_2, len(header_position['header']))
-
         if text_between_headers:
             document_outline.append(text_between_headers)
 
@@ -179,7 +179,7 @@ def process_document_outline(document_outline):
                 processed_document_outline.append(text_element)
             elif (len(text_element['text'])/4) > 2048:
                 print('The following text snippet is too long for GPT-3 processing. Add a heading or subheading to split this snippet into smaller sections: ',
-                      '\n\n', text_element['text'])
+                      '\n', text_element['text'])
         else:
             processed_document_outline.append(text_element)
         print('Processed text element', (index + 1),
@@ -197,12 +197,74 @@ def premade_processed_document_outline():
     return processed_document_outline
 
 
+def correct_carriage_returns(text):
+    first_four_chars = text[:3]
+    if '\n\n' in first_four_chars:
+        return text[2:]
+    else:
+        return text
+
+
+def covert_document_outline_to_google_doc(title, processed_document_outline):
+    document_id = google_docs_api_helpers.create_document(title)
+    for text_item in reversed(processed_document_outline):
+        text_type = text_item['text_type']
+        if text_type == 'unstyled':
+            processed_text = text_item['processed_text']
+            text_without_spaces_after_bulletpoints = processed_text.replace(
+                '\n- ', '\n')
+            text_without_all_bullet_points = text_without_spaces_after_bulletpoints.replace(
+                '\n-', '\n')
+            text_with_cleaned_hyphens = text_without_all_bullet_points.replace(
+                '- ', '')
+            text_with_corerct_spacing = re.sub(r'\.(?=\S)([A-Z])', ('. ' + r'\1'),
+                                               text_with_cleaned_hyphens)
+            cleaned_text = correct_carriage_returns(text_with_corerct_spacing)
+            requests = google_docs_formatting_helpers.create_text_with_bullet_points(
+                cleaned_text)
+            google_docs_api_helpers.update_document(requests, document_id)
+        else:
+            header = text_item['text']
+            h3_present = text_item['h3_present']
+            if text_type == 'h1' and h3_present:
+                requests = google_docs_formatting_helpers.create_bold_header(
+                    header)
+                google_docs_api_helpers.update_document(
+                    requests, document_id)
+            elif text_type == 'h2' and h3_present:
+                requests = google_docs_formatting_helpers.create_header(
+                    header)
+                google_docs_api_helpers.update_document(
+                    requests, document_id)
+            elif text_type == 'h3':
+                requests = google_docs_formatting_helpers.create_bold_sub_header(
+                    header)
+                google_docs_api_helpers.update_document(
+                    requests, document_id)
+            elif text_type == 'h1' and h3_present == False:
+                requests = google_docs_formatting_helpers.create_header(
+                    header)
+                google_docs_api_helpers.update_document(
+                    requests, document_id)
+            elif text_type == 'h2' and h3_present == False:
+                requests = google_docs_formatting_helpers.create_bold_sub_header(
+                    header)
+                google_docs_api_helpers.update_document(
+                    requests, document_id)
+    requests = google_docs_formatting_helpers.create_title(title)
+    google_docs_api_helpers.update_document(
+        requests, document_id)
+
+
 def scrape_content():
+    print('Give this document a name: ')
+    title = input()
+
     print('Scraping content...')
 
     with open('genei_notepad.html') as fp:
         soup = BeautifulSoup(fp, 'html.parser')
-        get_text(soup.find_all(text=True))
+        get_all_text(soup.find_all(text=True))
         h1_headers = create_header_arrays(soup.find_all('h1'))
         h2_headers = create_header_arrays(soup.find_all('h2'))
         h3_headers = create_header_arrays(soup.find_all('h3'))
@@ -229,83 +291,11 @@ def scrape_content():
     document_outline = generate_text_snippets(header_positions)
 
     print('Processing document outline...')
-    print(premade_processed_document_outline())
+    processed_document_outline = process_document_outline(document_outline)
 
-
-def correct_carriage_returns(text):
-    first_four_chars = ''
-    for index, char in enumerate(text):
-        if index < 4:
-            first_four_chars += char
-        else:
-            break
-    if '\n' in first_four_chars and first_four_chars != '\n\n':
-        cleaned_text = text[2:]
-        return cleaned_text
-    elif first_four_chars == '\n\n':
-        cleaned_text = text[2:]
-        return cleaned_text
-    else:
-        return text
-
-
-def add_outline_to_google_doc():
-    document_id = google_docs_api_helpers.create_document(title)
-    for text_item in reversed(processed_document_outline):
-        if text_item['text_type'] == 'unstyled':
-            text_without_spaced_bullet_points = text_item['processed_text'].replace(
-                '\n- ', '\n')
-            text_without_all_bullet_points = text_without_spaced_bullet_points.replace(
-                '\n-', '\n')
-            text_with_cleaned_hyphens = text_without_all_bullet_points.replace(
-                '- ', '')
-            text_with_corerct_spacing = re.sub(r'\.(?=\S)([A-Z])', ('. ' + r'\1'),
-                                               text_with_cleaned_hyphens)
-            cleaned_text = correct_carriage_returns(text_with_corerct_spacing)
-            requests = google_docs_formatting_helpers.create_text_with_bullet_points(
-                cleaned_text)
-            google_docs_api_helpers.update_document(
-                requests=requests, document_id=document_id)
-        elif text_item['text_type'] == 'h1' and text_item['h3_present']:
-            header = text_item['text']
-            requests = google_docs_formatting_helpers.create_bold_header(
-                header)
-            google_docs_api_helpers.update_document(
-                requests=requests, document_id=document_id)
-        elif text_item['text_type'] == 'h2' and text_item['h3_present']:
-            header = text_item['text']
-            requests = google_docs_formatting_helpers.create_header(header)
-            google_docs_api_helpers.update_document(
-                requests=requests, document_id=document_id)
-        elif text_item['text_type'] == 'h3':
-            header = text_item['text']
-            requests = google_docs_formatting_helpers.create_bold_sub_header(
-                header)
-            google_docs_api_helpers.update_document(
-                requests=requests, document_id=document_id)
-        elif text_item['text_type'] == 'h1' and text_item['h3_present'] != True:
-            header = text_item['text']
-            requests = google_docs_formatting_helpers.create_header(header)
-            google_docs_api_helpers.update_document(
-                requests=requests, document_id=document_id)
-        elif text_item['text_type'] == 'h2' and text_item['h3_present'] != True:
-            header = text_item['text']
-            requests = google_docs_formatting_helpers.create_bold_sub_header(
-                header)
-            google_docs_api_helpers.update_document(
-                requests=requests, document_id=document_id)
-    requests = google_docs_formatting_helpers.create_title(title)
-    google_docs_api_helpers.update_document(
-        requests=requests, document_id=document_id)
+    print('Coverting document outline to Google Doc...')
+    covert_document_outline_to_google_doc(title, processed_document_outline)
 
 
 if __name__ == '__main__':
-    print('Give this document a name: ')
-    global title
-    title = input()
-
     scrape_content()
-    # get_header_info()
-    # generate_text_snippets()
-    # process_document_with_openai()
-    # add_outline_to_google_doc()
