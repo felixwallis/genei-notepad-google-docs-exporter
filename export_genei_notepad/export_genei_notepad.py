@@ -304,10 +304,10 @@ def export_genei_notepad_to_google_doc():
     document_outline = generate_text_snippets(header_positions)
 
     print('Processing document outline...')
-    processed_document_outline = process_document_outline(document_outline)
+    # processed_document_outline = process_document_outline(document_outline)
     # Use this premade processed document outline when testing to prevent being
     # charged for GPT-3 use
-    # processed_document_outline = premade_processed_document_outline()
+    processed_document_outline = premade_processed_document_outline()
 
     print('Coverting document outline to Google Doc...')
     covert_document_outline_to_google_doc(title, processed_document_outline)
