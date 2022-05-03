@@ -2,7 +2,6 @@ from bs4 import BeautifulSoup
 import re
 import json
 import openai
-from requests import get
 import google_docs_formatting_helpers
 import google_docs_api_helpers
 
@@ -175,7 +174,7 @@ def process_text_snippet_with_openai(text_to_process):
 # Return updated document_outline with text snippets processed using GPT-3
 def process_document_outline(document_outline):
     api_key = ''
-    with open('OpenAI_API_Key.json', 'r') as fp:
+    with open('../openai_credentials.json', 'r') as fp:
         json_data = json.load(fp)
         api_key = json_data['API_Key']
     openai.api_key = api_key
@@ -202,7 +201,7 @@ def process_document_outline(document_outline):
 # Example of document outline processed by GPT-3
 # Only use when testing
 def premade_processed_document_outline():
-    with open('dev_processed_text.json', 'r') as fp:
+    with open('../example_processed_text.json', 'r') as fp:
         json_data = json.load(fp)
         processed_document_outline = json_data['processed_document_outline']
 
@@ -276,7 +275,7 @@ def export_genei_notepad_to_google_doc():
 
     print('Scraping content...')
 
-    with open('genei_notepad.html') as fp:
+    with open('../genei_notepad.html') as fp:
         soup = BeautifulSoup(fp, 'html.parser')
         get_all_text(soup.find_all(text=True))
         h1_headers = create_header_arrays(soup.find_all('h1'))
@@ -306,6 +305,9 @@ def export_genei_notepad_to_google_doc():
 
     print('Processing document outline...')
     processed_document_outline = process_document_outline(document_outline)
+    # Use this premade processed document outline when testing to prevent being
+    # charged for GPT-3 use
+    # processed_document_outline = premade_processed_document_outline()
 
     print('Coverting document outline to Google Doc...')
     covert_document_outline_to_google_doc(title, processed_document_outline)
