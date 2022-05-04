@@ -1,5 +1,5 @@
 # genei-notepad-google-docs-exporter (GNGDE)
-GNGDE is a python script for ‘smartly’ exporting Genei notepads to Google Docs. It uses OpenAI’s GPT-3 autoregressive language model to summarise, punctuate, and format Genei notepad content and create a Google Doc based on its output. 
+GNGDE is a python script for ‘smartly’ exporting Genei notepads to Google Docs. It uses [OpenAI’s GPT-3 autoregressive language model](https://openai.com/blog/gpt-3-apps/) to summarise, punctuate, and format Genei notepad content and create a Google Doc based on its output. 
 
 ## GNGDE solves two problems with Genei notepads
 Notes become messy and disorganised when adding highlighted text and summaries to a Genei notepad. They quickly become full of lousy punctuation, grammatical errors, and inconsistent formatting. Fixing these problems is time-consuming and tedious. GNGDE solves this problem by using GPT-3 to process notepad content and fix its formatting, punctuation, and grammar. GPT-3 can also summarise Genei notepads, distilling extended highlights from PDFs or lengthy summaries. 
