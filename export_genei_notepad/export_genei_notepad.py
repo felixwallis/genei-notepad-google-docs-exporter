@@ -8,13 +8,13 @@ import google_docs_api_helpers
 
 # Convert text in genei_notepad.html to string
 def get_all_text(all_text):
-    # Store text string globally for future functions
+    # Store text string globally to be used by all the functions below
     global all_text_string
     all_text_string = ''
     for text in all_text:
         all_text_list = []
-        rl = re.split(r'\s', text)
-        for word in rl:
+        words = re.split(r'\s', text)
+        for word in words:
             if len(word):
                 all_text_list.append(word)
         text = ' '.join(all_text_list)
@@ -81,7 +81,7 @@ def get_header_positions(headers, header_type, h3_present):
     return type_specific_header_positions
 
 
-# Return text between two headers from all_text_string
+# Return text between two markers from all_text_string
 def retrieve_text_between_markers(marker_1, marker_2, header_length):
     text_snippet = ''
     for index, char in enumerate(all_text_string):
@@ -97,11 +97,12 @@ def retrieve_text_between_markers(marker_1, marker_2, header_length):
             'text': text_snippet,
             'text_type': 'unstyled'
         }
+        
         return text_snippet_obj
 
 
 # Return genei_notepad.html outline based on headers, header positions, and text between headers
-def generate_text_snippets(header_positions):
+def generate_document_outline(header_positions):
     document_outline = []
     for index, header_position in enumerate(header_positions):
         marker_1 = header_position['header_position']
@@ -181,11 +182,11 @@ def process_document_outline(document_outline):
     for index, text_element in enumerate(document_outline):
         if text_element['text_type'] == 'unstyled':
             # Check length of text to be processed does not exceed GPT-3 token limit
-            if (len(text_element['text'])/4) < 1048:
+            if (len(text_element['text'])/4) <= 1048:
                 text_element['processed_text'] = process_text_snippet_with_openai(
                     text_element['text'])
                 processed_document_outline.append(text_element)
-            elif (len(text_element['text'])/4) > 2048:
+            elif (len(text_element['text'])/4) >= 1048:
                 print('The following text snippet is too long for GPT-3 processing. Add a heading or subheading to split this snippet into smaller sections: ',
                       '\n', text_element['text'])
         else:
@@ -196,7 +197,7 @@ def process_document_outline(document_outline):
     return processed_document_outline
 
 
-# Example of document outline processed by GPT-3
+# Example of a document outline processed by GPT-3
 # Only use when testing
 def premade_processed_document_outline():
     with open('../example_processed_text.json', 'r') as fp:
@@ -222,9 +223,9 @@ def covert_document_outline_to_google_doc(title, processed_document_outline):
         text_type = text_item['text_type']
         if text_type == 'unstyled':
             processed_text = text_item['processed_text']
-            text_without_spaces_after_bulletpoints = processed_text.replace(
+            text_without_spaces_after_bullet_points = processed_text.replace(
                 '\n- ', '\n')
-            text_without_all_bullet_points = text_without_spaces_after_bulletpoints.replace(
+            text_without_all_bullet_points = text_without_spaces_after_bullet_points.replace(
                 '\n-', '\n')
             text_with_cleaned_hyphens = text_without_all_bullet_points.replace(
                 '- ', '')
@@ -280,7 +281,7 @@ def export_genei_notepad_to_google_doc():
         h2_headers = create_header_arrays(soup.find_all('h2'))
         h3_headers = create_header_arrays(soup.find_all('h3'))
 
-    # Check if h3 headers are present for Google Drive formatting
+    # Check if h3 headers are present for Google Drive formatting logic
     if len(h3_headers):
         h3_present = True
     else:
@@ -299,7 +300,7 @@ def export_genei_notepad_to_google_doc():
         key=lambda item: item['header_position'])
 
     print('Generating document outline...')
-    document_outline = generate_text_snippets(header_positions)
+    document_outline = generate_document_outline(header_positions)
 
     print('Processing document outline...')
     processed_document_outline = process_document_outline(document_outline)
