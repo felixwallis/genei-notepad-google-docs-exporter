@@ -8,7 +8,7 @@ A further problem with Genei notepads is that they currently do not have any G S
 
 # Setup
 ## Packages
-GNGDE uses the packages outlined in the [requirements.txt](requirements.txt) file. Run `pip install -r requirements.txt` to install these packages on your local machine.
+GNGDE uses the packages listed in the [requirements.txt](requirements.txt) file. Run `pip install -r requirements.txt` to install these packages on your local machine.
 
 ## OpenAI API
 GNGDE requires an OpenAI API key which can be accessed [here](https://beta.openai.com/account/api-keys). In the route directory of this project, create a file called openai_credentials.json with a field `API_Key`. Paste your OpenAI API key into this field. The file should look like this:
@@ -22,9 +22,9 @@ GNGDE uses the [Google Docs API](https://developers.google.com/docs/api). Google
 2. [Enable the Google Docs API](https://console.cloud.google.com/apis/library/docs.googleapis.com) for your project from the Google Cloud Console. 
 3. Create credentials for the Google Docs API:
     - Visit the Enabled APIs and services tab in the Google Cloud Console, select the Google Docs API, and click the Create Credentials button. 
-    - GNGDE requires access to user data, so choose this option when choosing a credential type. 
+    - GNGDE requires access to user data, so pick this option when choosing a credential type. 
     - Fill in the OAuth consent screen page using the app name genei-notepad-google-docs-exporter. 
-    - Use your email for the user support email and developer contact information fields. 
+    - Use your email for the 'user support email' and 'developer contact information' fields. 
     - Enable the ./auth/documents scope for the OAuth credential so GNGDE can create and edit Google Docs. 
     - Select ‘Desktop app’ as the application type for the OAuth Client ID and give the OAuth 2.0 Client a name. 
 4. After creating an OAuth 2.0 Client, visit the Credentials tab in the Google Cloud Console and download the OAuth credentials as a .JSON file. Rename this file google_docs_credentials.json and save it in the route directory of this project. The file should look like this:
@@ -39,7 +39,7 @@ GNGDE uses the [Google Docs API](https://developers.google.com/docs/api). Google
     "redirect_uris": [***]
   }
 }`
-5. To ensure you have access to GNGDE, visit the OAuth consent screen tab in the Google Cloud Console and add your email as a test user under the Test users section. 
+5. To ensure GNGDE has access to your Google Drive, visit the OAuth consent screen tab in the Google Cloud Console and add your email as a test user under the Test users section. 
 
 # Usage
 ## Retrieving content from the Genei notepad
@@ -58,7 +58,7 @@ GNGDE uses the [Google Docs API](https://developers.google.com/docs/api). Google
 - GNGDE’s Google Docs formatting can be edited by changing the `requests` arrays in the `create_title`, `create_bold_header`, `create_header`, `create_bold_sub_header`, and `create_text_with_bullet_points` functions in the [google_docs_formatting_helpers.py](google_docs_formatting_helpers.py) file. 
 
 # Support
-If you have any problems or troubleshooting queries when using GNGDE, please open a new issue in the GitHub repo, and I’ll make sure to reply to it as soon as possible 😃.
+If you have any problems or troubleshooting queries when using GNGDE, please open a new issue in this GitHub repo, and I’ll make sure to reply to it as soon as possible 😃.
 
 # Contributing
 Pull requests are welcome. For significant changes, please open an issue first to discuss what you would like to change.
