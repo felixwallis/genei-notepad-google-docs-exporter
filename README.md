@@ -4,7 +4,7 @@ GNGDE is a python script for ‘smartly’ exporting Genei notepads to Google Do
 ## GNGDE solves two problems with Genei notepads
 Notes become messy and disorganised when adding highlighted text and summaries to a Genei notepad. They quickly become full of lousy punctuation, grammatical errors, and inconsistent formatting. Fixing these errors is time-consuming and tedious. GNGDE solves this problem by using GPT-3 to process notepad content and fix its formatting, punctuation, and grammar. GPT-3 can also summarise Genei notepads, distilling extended highlights from PDFs or lengthy summaries. 
 
-A further problem with Genei notepads is that they currently do not have any GSuite export options. GNGDE performs this task by writing GPT-3 processed content to Google Docs. 
+A further problem with Genei notepads is that they currently do not have any G Suite export options. GNGDE performs this task by writing GPT-3 processed content to Google Docs. 
 
 # Setup
 ## Packages
