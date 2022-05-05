@@ -43,6 +43,7 @@ def create_document(title):
         print(err)
 
 
+# Update Google Docs document
 def update_document(requests, document_id):
     try:
         service = build('docs', 'v1', credentials=creds)
