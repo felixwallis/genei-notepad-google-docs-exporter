@@ -97,7 +97,7 @@ def retrieve_text_between_markers(marker_1, marker_2, header_length):
             'text': text_snippet,
             'text_type': 'unstyled'
         }
-        
+
         return text_snippet_obj
 
 
@@ -150,7 +150,7 @@ def make_openai_request(text_prompt, model):
 # Return a text string turned into bullet points by GPT-3
 def process_text_snippet_with_openai(text_to_process):
     text_prompt = 'Turn these sentences into bullet points: ' + \
-        text_to_process
+        text_to_process + '\n'
     processed_text = make_openai_request(
         text_prompt, 'text-davinci-001')['choices'][0]['text']
     # Long processed_text indicates successful processing by GPT-3
@@ -158,7 +158,7 @@ def process_text_snippet_with_openai(text_to_process):
         return processed_text
     else:
         print('Poor GPT-3 response. Reprocessing text element...')
-        new_text_prompt = 'Turn these sentences into a paragraph: ' + text_to_process
+        new_text_prompt = 'Turn these sentences into a paragraph: ' + text_to_process + '\n'
         processed_paragraph = make_openai_request(
             new_text_prompt, 'text-davinci-001')['choices'][0]['text']
         # Split paragraph at periods and add new lines to turn into bullet points later
@@ -207,15 +207,6 @@ def premade_processed_document_outline():
     return processed_document_outline
 
 
-# Fix any weird carriage returns added by GPT-3
-def correct_carriage_returns(text):
-    first_four_chars = text[:4]
-    if '\n\n' in first_four_chars:
-        return text[2:]
-    else:
-        return text
-
-
 # Write the GPT-3 processed document_outline to a Google Docs file
 def covert_document_outline_to_google_doc(title, processed_document_outline):
     document_id = google_docs_api_helpers.create_document(title)
@@ -231,7 +222,7 @@ def covert_document_outline_to_google_doc(title, processed_document_outline):
                 '- ', '')
             text_with_corerct_spacing = re.sub(r'\.(?=\S)([A-Z])', ('. ' + r'\1'),
                                                text_with_cleaned_hyphens)
-            cleaned_text = correct_carriage_returns(text_with_corerct_spacing)
+            cleaned_text = text_with_corerct_spacing[1:]
             requests = google_docs_formatting_helpers.create_text_with_bullet_points(
                 cleaned_text)
             google_docs_api_helpers.update_document(requests, document_id)
