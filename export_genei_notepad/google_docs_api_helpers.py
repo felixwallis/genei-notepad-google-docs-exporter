@@ -8,6 +8,7 @@ from googleapiclient.errors import HttpError
 SCOPES = ['https://www.googleapis.com/auth/documents']
 
 
+# Create Google Docs document
 def create_document(title):
     global creds
     creds = None
