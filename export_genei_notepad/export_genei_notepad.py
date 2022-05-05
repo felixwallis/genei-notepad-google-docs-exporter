@@ -173,11 +173,9 @@ def process_text_snippet_with_openai(text_to_process):
 
 # Return updated document_outline with text snippets processed using GPT-3
 def process_document_outline(document_outline):
-    api_key = ''
     with open('../openai_credentials.json', 'r') as fp:
         json_data = json.load(fp)
-        api_key = json_data['API_Key']
-    openai.api_key = api_key
+        openai.api_key = json_data['API_Key']
 
     processed_document_outline = []
     for index, text_element in enumerate(document_outline):
