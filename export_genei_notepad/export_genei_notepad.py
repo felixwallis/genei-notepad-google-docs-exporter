@@ -127,9 +127,6 @@ def generate_text_snippets(header_positions):
         if text_between_headers:
             document_outline.append(text_between_headers)
 
-    # Drop first item in document_outline as contains genei resource title
-    document_outline.pop(0)
-
     return document_outline
 
 
