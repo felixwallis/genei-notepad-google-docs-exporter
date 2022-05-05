@@ -208,7 +208,7 @@ def premade_processed_document_outline():
 
 # Fix any weird carriage returns added by GPT-3
 def correct_carriage_returns(text):
-    first_four_chars = text[:3]
+    first_four_chars = text[:4]
     if '\n\n' in first_four_chars:
         return text[2:]
     else:
