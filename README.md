@@ -11,7 +11,10 @@ A further problem with Genei notepads is that they currently do not have any GSu
 GNGDE uses the packages outlined in the [requirements.txt](requirements.txt) file. Run `pip install -r requirements.txt` to install these packages on your local machine.
 
 ## OpenAI API
-GNGDE requires an OpenAI API key which can be accessed [here](https://beta.openai.com/account/api-keys). Paste your API key into the `API_Key` field in the [openai_credentials.json](openai_credentials.json) file.
+GNGDE requires an OpenAI API key which can be accessed [here](https://beta.openai.com/account/api-keys). In the route directory of this project, create a file called openai_credentials.json with a field `API_Key`. Paste your OpenAI API key into this field. The file should look like this:
+`{
+  "API_Key": "YOUR_OPENAI_API_KEY"
+}`
 
 ## Google Docs API
 GNGDE uses the [Google Docs API](https://developers.google.com/docs/api). Google Docs API credentials can be generated via the following steps. 
@@ -24,7 +27,7 @@ GNGDE uses the [Google Docs API](https://developers.google.com/docs/api). Google
     - Use your email for the user support email and developer contact information fields. 
     - Enable the ./auth/documents scope for the OAuth credential so GNGDE can create and edit Google Docs. 
     - Select ‘Desktop app’ as the application type for the OAuth Client ID and give the OAuth 2.0 Client a name. 
-4. After creating an OAuth 2.0 Client, visit the Credentials tab in the Google Cloud Console and download the OAuth credentials as a .JSON file. Copy and paste the credentials from this file into GNGDE’s [google_docs_credentials.json](google_docs_credentials.json) file. The file should look like this:
+4. After creating an OAuth 2.0 Client, visit the Credentials tab in the Google Cloud Console and download the OAuth credentials as a .JSON file. Rename this file google_docs_credentials.json and save it in the route directory of this project. The file should look like this:
 `{
   "installed": {
     "client_id": ***,
