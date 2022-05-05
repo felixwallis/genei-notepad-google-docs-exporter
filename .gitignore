@@ -3,3 +3,4 @@ __pycache__/
 .DS_Store
 google_docs_credentials.json
 openai_credentials.json
+token.json
