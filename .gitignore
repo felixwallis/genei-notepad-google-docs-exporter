@@ -5,9 +5,6 @@ __pycache__/
 # Ignore custom folder atributes from project usage on local machines
 .DS_Store
 
-# Ignore Genei notepad content from export_genei_notepad.py usage
-genei_notepad.html
-
 # Ignore sensitive credentials
 google_docs_credentials.json
 openai_credentials.json
