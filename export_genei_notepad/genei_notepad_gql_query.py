@@ -1,5 +1,6 @@
 import requests
-import json
+
+input = input('Enter the name of the note you want to export: ')
 
 
 def search_genei_notes(input):
@@ -24,7 +25,7 @@ def search_genei_notes(input):
     r = requests.post(url, json=({'query': query}), headers=headers)
     return r.json()
 
-search_results = search_genei_notes('test')
+search_results = search_genei_notes(input)
 top_search_result = search_results['data']['searchByName']['results'][0]
 top_search_result_id = top_search_result['item']['id']
 
@@ -39,5 +40,10 @@ def get_note_data(input):
     r = requests.post(url, json=({'query': query}), headers=headers)
     return r.json()
 
-note_data = get_note_data(top_search_result_id)
-print(note_data)
+note_data = get_note_data(top_search_result_id)['data']['note']['data']
+
+def process_note_data(note_data):
+    content = note_data['root']
+    print(content)
+
+process_note_data(note_data)
