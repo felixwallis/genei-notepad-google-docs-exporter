@@ -17,7 +17,7 @@ HEADERS = {
 }
 
 
-def handle_request_errors(func):
+def handle_request_errors(func: callable) -> callable:
     """Decorator to handle common request errors."""
     def wrapper(*args, **kwargs):
         try:
@@ -68,11 +68,11 @@ def search_notes(note_name: str) -> str:
 
 
 @handle_request_errors
-def fetch_note_json(note_name):
+def fetch_note_json(note_name: str) -> dict:
     note_id = search_notes(note_name)
 
     if not note_id:
-        return f'No note found with name "{note_name}". Please try a different search term.'
+        return None
 
     data_query = f"""
         query {{
@@ -95,7 +95,7 @@ def fetch_note_json(note_name):
 
 
 if __name__ == '__main__':
-    note_name = input('Enter the name of the note you want to fetch: ')
+    note_name = "1.0 - Quantitative Data Analysis - 'Introduction' - Week 1 Lecture Notes"
     note_json = fetch_note_json(note_name)
     if not note_json:
         print('No note found with that name.')

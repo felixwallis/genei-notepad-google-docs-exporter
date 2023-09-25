@@ -1,7 +1,7 @@
 from clients.fetch_note_json import fetch_note_json
 
 
-def process_text_nodes(children):
+def process_text_nodes(children: list) -> str:
     """
     Process and combine adjacent text nodes, applying formatting where necessary.
     """
@@ -34,7 +34,7 @@ def process_text_nodes(children):
     return ''.join(combined_text)
 
 
-def json_to_md(node, parent_list_type=None):
+def json_to_md(node: dict, parent_list_type: str = None) -> str:
     """
     Convert a Genei note JSON node to Markdown.
     """
