@@ -85,7 +85,7 @@ def fetch_note_json(note_name):
         API_URL, json={'query': data_query}, headers=HEADERS)
     response.raise_for_status()
 
-    note_json = response.json()['data']['note']['data']
+    note_json = response.json()['data']['note']['data']['root']
 
     if 'errors' in response.json():
         print("GraphQL Error:", response.json()['errors'])
