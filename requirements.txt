@@ -32,6 +32,7 @@ requests==2.31.0
 six==1.16.0
 stack-data==0.6.2
 tornado==6.3.3
+tqdm==4.66.1
 traitlets==5.10.0
 urllib3==2.0.5
 wcwidth==0.2.6

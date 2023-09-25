@@ -1,6 +1,8 @@
 import os
 import json
 
+from tqdm import tqdm
+
 from clients.fetch_note_json import fetch_note_json
 from conversion.json_to_md import json_to_md
 
@@ -46,18 +48,19 @@ def main():
 
     try:
         with open(config["note_names_file_path"], 'r') as file:
-            for note_name in file:
-                note_name = note_name.strip()
-                if not note_name:
-                    continue
+            note_names = file.readlines()
 
-                markdown_output = convert_note_to_markdown(note_name)
+        for note_name in tqdm(note_names, desc="Converting notes", unit="note"):
+            note_name = note_name.strip()
+            if not note_name:
+                continue
 
-                if markdown_output:
-                    save_markdown_output(
-                        markdown_output, note_name, config["dist_dir_path"])
-                    print(
-                        f'Successfully saved markdown output to {os.path.join(config["dist_dir_path"], note_name)}.md')
+            markdown_output = convert_note_to_markdown(note_name)
+
+            if markdown_output:
+                save_markdown_output(
+                    markdown_output, note_name, config["dist_dir_path"])
+
     except FileNotFoundError:
         print(f"Error: File {config['note_names_file_path']} not found.")
     except Exception as e:
