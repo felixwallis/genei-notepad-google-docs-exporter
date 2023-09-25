@@ -4,8 +4,7 @@ __pycache__/
 
 # Ignore custom folder atributes from project usage on local machines
 .DS_Store
+.venv
 
-# Ignore sensitive credentials
-google_docs_credentials.json
-openai_credentials.json
-token.json
+data/
+dist/
