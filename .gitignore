@@ -5,6 +5,7 @@ __pycache__/
 # Ignore custom folder atributes from project usage on local machines
 .DS_Store
 .venv
+.env
 
 data/
 dist/
