@@ -1,2 +1,67 @@
 1.0 - Quantitative Data Analysis - 'Introduction' - Week 1 Lecture Notes
 2.0 - Quantitative Data Analysis - 'Causality 1' - Week 2 Lecture Notes
+3.0 - Quantitative Data Analysis - 'Description and Measurement' - Week 3 Lecture Notes
+4.0 - Quantitative Data Analysis - 'Regression 1 (Prediction)' - Week 4 Lecture Notes
+5.0 - Quantitative Data Analysis - 'Regression 2 (Specification)' - Week 5 Lecture Notes
+6.0 - Quantitative Data Analysis - 'Regression 3 and Causality 2' - Week 6 Lecture Notes
+7.0 - Quantitative Data Analysis - 'Causality 3 (Observational Data)' - Week 7 Lecture Notes
+8.0 - Quantitative Data Analysis - 'Sampling, Uncertainty, and Confidence Intervals' - Week 8 Lecture Notes
+9.0 - Quantitative Data Analysis - 'Uncertainty 2 (Hypothesis Testing)' - Week 9 Lecture Notes
+1.0 - Ethics and Public Policy - 'Introduction to Ethics and Public Policy' - Topic 1 Lecture Notes
+2.0 - Ethics and Public Policy - 'Wellbeing' - Topic 2 Lecture Notes
+3.0 - Ethics and Public Policy - 'Utilitarianism, Efficiency, and Cost-benefit Analysis' - Topic 3 Lecture Notes
+5.0 - Ethics and Public Policy - 'Responsibility, Merit, and Desert' - Topic 5 Lecture Notes
+6.0 - Ethics and Public Policy - 'Liberty and Autonomy' - Topic 6 Lecture Notes
+8.0 - Ethics and Public Policy - 'Security' - Topic 8 Lecture Notes
+1.0 - Public Sector Economics - 'Markets and Government Intervention' - Week 1 Lecture Notes
+2.0 - Public Sector Economics - 'Public Goods' - Week 2 Lecture Notes
+3.0 - Public Sector Economics - 'Externalities' - Week 3 Lecture Notes
+4.0 - Public Sector Economics - 'Market Power' - Week 4 Lecture Notes
+5.0 - Public Sector Economics - 'Equity and Income Distribution' - Week 5 Lecture Notes
+7.0 - Public Sector Economics - 'Taxation' - Week 7 Lecture Notes
+8.0 - Public Sector Economics - 'IS-LM Model' - Week 8 Lecture Notes
+9.0 - Public Sector Economics - 'The Phillips Curve' - Week 9 Lecture Notes
+6.0 - Public Sector Economics - 'Cost-Benefit Analysis' - Week 6 Lecture Notes
+1.0 - Regulating Big Business - 'Regulation and the Market Failure Framework'- Week 1 Lecture Notes
+2.0 - Regulating Big Business - 'Delegation and Standard Setting' - Week 2 Lecture Notes
+3.0 - Regulating Big Business - 'Enforcement and Compliance' - Week 3 Lecture Notes
+4.0 - Regulating Big Business - 'Incentive-based Regulation' - Week 4 Lecture Notes
+6.0 - Regulating Big Business - 'The Role of Technology in Regulation' - Week 6 Lecture Notes
+7.0 - Regulating Big Business - 'Global Business Regulation' - Week 7 Lecture Notes
+8.0 - Regulating Big Business - 'CSR: Environmental Protection' - Week 8 Lecture Notes
+9.0 - Regulating Big Business - 'CSR: Labour and Human Rights' - Week 9 Lecture Notes
+1.0 - Qualitative Research Methods - 'Introduction' - Week 1 Lecture Notes
+2.0 - Qualitative Research Methods - 'Research Ethics: Reflexivity and Positionality Participatory Research' - Week 2 Lecture Notes
+3.0 - Qualitative Research Methods - 'Getting into the 'Field'' - Week 3 Lecture Notes
+4.0 - Qualitative Research - 'Ethnography' - Week 4 Lecture Notes
+7.0 - Qualitative Research Methods - 'Close-ended Interviewing' - Week 7 Lecture Notes
+8.0 - Qualitative Research - 'Thematic Coding' - Week 8 Lecture Notes
+9.0 - Qualitative Research Methods - 'Thematic Coding 2' - Week 9 Lecture Notes
+5.0 - Qualitative Research - 'Interviews in Qualitative Research' - Week 5 Lecture Notes
+1.0 - British Politics - 'Introduction: Key Themes in British Politics' - Week 1 Lecture Notes
+3.0 - British Politics - 'Gender' - Week 3 Lecture Notes
+4.0 - British Politics - 'Ethnicity in British Politics' - Week 4 Lecture Notes
+5.0 - British Politics - 'Power at the Centre - Parliament and Government' - Week 5 Lecture Notes
+2.0 - British Politics - 'Class and Voting' - Week 2 Seminar Notes
+6.0 - British Politics - 'Parliament' - Week 6 Lecture Notes
+7.0 - British Politics - 'The Judiciary' - Week 7 Lecture Notes
+8.0 - British Politics - 'The Form and Future of the Union' - Week 8 Lecture Notes
+9.0 - British Politics - 'The UK in the World' - Week 9 Lecture Notes
+1.0 - Global Environmental Politics - 'Introduction' - Week 1 Lecture Notes
+2.0 - Global Environmental Politics - 'Who are the stakeholders?' - Week 2 Lecture Notes
+3.0 - Global Environmental Politics - 'Theories of global environmental politics' - Week 3 Lecture Notes
+4.0 - Global Environmental Politics - 'Collective action and environmental movements' - Week 4 Lecture Notes
+5.0 - Global Environmental Politics - 'Interstate Bargaining and Regime Formulation' - Week 5 Lecture Notes
+6.0 - Global Environmental Politics - 'North-South Politics and Climate Justice' - Week 6 Lecture Notes
+7.0 - Global Environmental Politics - 'Health, gender and global environmental politics' - Week 7 Lecture Notes
+8.0 - Global Environmental Politics - 'Environmental Change and Security' - Week 8 Lecture Notes
+10.0 - Global Environmental Politics - 'Environmental politics & global markets: Can capitalism solve global environmental problems?' - Week 10 Lecture Notes
+1.0 - Politics and Policy in Practice - 'Introduction' - Week 1 Lecture Notes
+2.0 - Politics and Policy in Practice - 'Think Tanks' - Week 2 Lecture Notes
+3.0 - Politics and Policy in Practice - 'Scientific Experience' - Week 3 Lecture Notes
+4.0 - Politics and Policy in Practice - 'Macroeconomic Modelling' - Week 4 Lecture Notes
+5.0 - Politics and Policy in Practice - 'Citizens' Assemblies' - Week 5 Lecture Notes
+6.0 - Politics and Policy in Practice - 'Political Communications' - Week 6 Lecture Notes
+7.0 - Politics and Policy in Practice - 'Private sector comms' - Week 7 Lecture Notes
+8.0 - Politics and Policy in Practice - 'NGO / third sector communications' - Week 8 Lecture Notes
+9.0 - Politics and Policy in Practice - 'Government communications' - Week 9 Lecture Notes

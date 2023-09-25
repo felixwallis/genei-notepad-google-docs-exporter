@@ -38,6 +38,10 @@ def save_markdown_output(markdown_output: str,
     if not os.path.exists(dist_dir_path):
         os.makedirs(dist_dir_path)
 
+    invalid_chars = ['/', '\\', ':', '*', '?', '<', '>', '|', '"']
+    for char in invalid_chars:
+        note_name = note_name.replace(char, '_')
+
     file_path = os.path.join(dist_dir_path, f"{note_name}.md")
     with open(file_path, 'w') as file:
         file.write(markdown_output)
@@ -49,22 +53,21 @@ def main():
     try:
         with open(config["note_names_file_path"], 'r') as file:
             note_names = file.readlines()
-
-        for note_name in tqdm(note_names, desc="Converting notes", unit="note"):
-            note_name = note_name.strip()
-            if not note_name:
-                continue
-
-            markdown_output = convert_note_to_markdown(note_name)
-
-            if markdown_output:
-                save_markdown_output(
-                    markdown_output, note_name, config["dist_dir_path"])
-
     except FileNotFoundError:
         print(f"Error: File {config['note_names_file_path']} not found.")
     except Exception as e:
         print(f"An error occurred: {e}")
+
+    for note_name in tqdm(note_names, desc="Converting notes", unit="note"):
+        note_name = note_name.strip()
+        if not note_name:
+            continue
+
+        markdown_output = convert_note_to_markdown(note_name)
+
+        if markdown_output:
+            save_markdown_output(
+                markdown_output, note_name, config["dist_dir_path"])
 
 
 if __name__ == '__main__':
