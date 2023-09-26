@@ -1,11 +1,13 @@
-# Ignore Byte-compiled / optimized / DLL files
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.pyc
 
-# Ignore custom folder atributes from project usage on local machines
+# Custom folder attributes from project usage on local machines
 .DS_Store
 .venv
 .env
 
+# Miscellaneous files/folders
 data/
 dist/
+note_names.txt
