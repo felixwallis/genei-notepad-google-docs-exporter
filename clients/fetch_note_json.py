@@ -64,7 +64,10 @@ def search_notes(note_name: str) -> str:
         print("GraphQL Error:", response.json()['errors'])
         return None
 
-    return search_results[0]['item']['id'] if search_results else None
+    for result in search_results:
+        if 'id' in result['item']:
+            return result['item']['id']
+    return None
 
 
 @handle_request_errors
