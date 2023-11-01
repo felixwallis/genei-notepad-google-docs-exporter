@@ -75,7 +75,7 @@ def json_to_md(node: dict, parent_list_type: str = None) -> str:
         return sign + node.get('equation', '') + sign
 
     if node_type == 'quote':
-        return '> ' + ' '.join([json_to_md(child) for child in node['children']])
+        return '\n> ' + ' '.join([json_to_md(child) for child in node['children']]) + "\n"
 
     if node_type == 'resource-link':
         return ' '.join([json_to_md(child) for child in node['children']])
